@@ -14,6 +14,7 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Courgette|Inconsolata|Titillium+Web|Fira+Sans+Condensed" />
     <!--Bootstrap-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="css/jqcloud.css" />
 
     <!--add a favicon-->
     <link rel="favicon" href="img/favicon.ico" type="image/ico" />
@@ -35,8 +36,11 @@
     <script src="https://dc-js.github.io/dc.js/js/crossfilter.js"></script>
     <script src="https://dc-js.github.io/dc.js/js/dc.js"></script>
 
-
     <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+
+    <script src="https://d3js.org/d3-hexbin.v0.2.min.js"></script>
+
+
     <script src="js/leaflet.markercluster-src.js"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -114,7 +118,41 @@
 
 <script>
 
-var map = L.map('map', {zoomControl: false, scrollWheelZoom: true, maxZoom: 21}).setView([44.570861,-123.276327], 12);
+
+    function wordFrequency(txt){
+
+        var normal_words = [
+            "to", "that", "this", "I", "them", "do", "This",
+            "the", "do", "See", "The", "and", "has", "have",
+            "me", "we", "who", "what", "out", "Will", "on",
+            "are", "s", "not", "may", "been", "you", "it"
+        ];
+
+
+        for (var i = 0; i < normal_words.length; i++) {
+            txt = txt.replace(normal_words[i], "");
+        }
+
+        txt = txt.replace("  ", "");
+
+        var wordArray = txt.split(/[ .?!,*'"]/);
+        var newArray = [], wordObj;
+        wordArray.forEach(function (word) {
+            wordObj = newArray.filter(function (w){
+                return w.text == word;
+            });
+            if (wordObj.length) {
+                wordObj[0].weight += 1;
+            } else {
+                newArray.push({text: word, weight: 1});
+            }
+        });
+        return newArray;
+    }
+
+
+
+    var map = L.map('map', {zoomControl: false, scrollWheelZoom: true, maxZoom: 21}).setView([44.570861,-123.276327], 12);
 //L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
 
 
@@ -252,6 +290,7 @@ d3.json('assets/demo.geojson', function(data) {
             features: everything.top(Infinity)
         });
         markers.addLayer(geoJsonLayer);
+        generateData();
     }
 
 
@@ -269,7 +308,33 @@ d3.json('assets/demo.geojson', function(data) {
             return map.getBounds().contains(L.geoJSON(d).getBounds())
         });
         dc.redrawAll();
+
+
+        var texts = "";
+        everything.filter(function(d) {
+            if (map.getBounds().contains(L.geoJSON(d.geometry).getBounds())) {
+                texts += (" " + d.properties.content);
+
+            }
+        });
+
+        frequency_list = wordFrequency(texts);
+        $('#cloud').jQCloud('destroy');
+        $('#cloud').jQCloud(frequency_list,{
+            // shape: 'rectangular',
+            // colors: ["#800026", "#bd0026", "#e31a1c", "#fc4e2a", "#fd8d3c", "#feb24c", "#fed976", "#ffeda0", "#ffffcc"]
+        });
+
+
+
     }
+
+
+    updateMapFilter();
+
+
+
+
 
 
 });
