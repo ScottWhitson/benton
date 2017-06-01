@@ -51,8 +51,6 @@
     <!-- leaflet mapbox js -->
     <script src="https://rawgit.com/mapbox/mapbox-gl-leaflet/master/leaflet-mapbox-gl.js"></script>
     <script src="js/jqcloud.js"></script>
-    <!--<script src="assets/data.js"></script>-->
-
 
 </head>
 
@@ -128,13 +126,15 @@
 
     function wordFrequency(txt){
 
-        var normal_words = [
-            "to", "that", "this", "them", "do", "This",
-            "the", "do", "See", "The", "and", "has", "have",
-            "me", "we", "who", "what", "out", "Will", "on",
-            "are",  "not", "may", "been", "you", "it"
-        ];
+//        var normal_words = [
+//            " to ", " that ", "this", "them", "do", "This",
+//            "the", "do", "See", "The", "and", "has", "have",
+//            "me", "we", "who", "what", "out", "Will", " on ",
+//            "are",  "not", "may", "been", "you", "it"
+//        ];
 
+        var normal_words = [
+        ];
 
         for (var i = 0; i < normal_words.length; i++) {
             txt = txt.replace(normal_words[i], "");
@@ -332,13 +332,11 @@
         everything.filter(function(d) {
             if (map.getBounds().contains(L.geoJSON(d.geometry).getBounds())) {
                 texts += (" " + d.properties.vision);
-
             }
         });
 
         var frequency_list = wordFrequency(texts);
         $('#cloud').jQCloud('destroy');
-
         $('#cloud').jQCloud(frequency_list,{
              colors: ["#800026", "#bd0026", "#e31a1c", "#fc4e2a", "#fd8d3c", "#feb24c", "#fed976", "#ffeda0", "#ffffcc"]
         });
