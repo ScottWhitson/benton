@@ -50,6 +50,7 @@
     <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.js"></script>
     <!-- leaflet mapbox js -->
     <script src="https://rawgit.com/mapbox/mapbox-gl-leaflet/master/leaflet-mapbox-gl.js"></script>
+    <script src="js/jqcloud.js"></script>
 
 </head>
 
@@ -165,7 +166,7 @@
 
     document.getElementsByClassName("leaflet-control-attribution")[0].style.visibility = "hidden";
 
-d3.json('assets/demo.geojson', function(data) {
+d3.json('assets/data.geojson', function(data) {
 
     //create crossfilter and dimensions
     var filter = crossfilter(data.features); //filter is the root object of crossfilter
@@ -195,7 +196,7 @@ d3.json('assets/demo.geojson', function(data) {
 
 
     var incomeDimension = filter.dimension(function(d) {
-        return d.properties.annhincome
+        return d.properties.income
 
     });
 
@@ -281,16 +282,16 @@ d3.json('assets/demo.geojson', function(data) {
     });
 
 
-//    function generateData() {
-//        var data = [];
-//        var geo = geomDimension.top(Infinity);
-//        for(var i = 0; i < geo.length; i++) {
-//            lng = geo[i].geometry.coordinates[1];
-//            lat = geo[i].geometry.coordinates[0];
-//            data.push([ lat, lng ]);
-//        }
-//    }
-   // generateData();
+    function generateData() {
+        var data = [];
+        var geo = geomDimension.top(Infinity);
+        for(var i = 0; i < geo.length; i++) {
+            lng = geo[i].geometry.coordinates[1];
+            lat = geo[i].geometry.coordinates[0];
+            data.push([ lat, lng ]);
+        }
+    }
+    generateData();
 
 
     function updateMap() {
@@ -301,7 +302,7 @@ d3.json('assets/demo.geojson', function(data) {
             features: everything.top(Infinity)
         });
         markers.addLayer(geoJsonLayer);
-      //  generateData();
+       generateData();
     }
 
 
@@ -324,7 +325,7 @@ d3.json('assets/demo.geojson', function(data) {
         var texts = "";
         everything.filter(function(d) {
             if (map.getBounds().contains(L.geoJSON(d.geometry).getBounds())) {
-                texts += (" " + d.properties.content);
+                texts += (" " + d.properties.value);
 
             }
         });
