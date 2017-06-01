@@ -30,20 +30,6 @@ h2{
     font-family: 'Titillium Web', serif;
 }
 
-.h2_overview{
-    font-size:25px;
-    /*margin-top: 20px;*/
-    padding-left: 5%;
-    padding-right: 28%;
-    padding-bottom: 2%;
-    color: whitesmoke;
-    text-shadow: 0 0 1px black;
-    font-family: 'Titillium Web', serif;
-    margin-bottom: 0px;
-    position:absolute;
-    bottom: 4%;
-
-}
 
 h3{
     font-weight:bold;
