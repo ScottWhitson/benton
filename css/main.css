@@ -8,6 +8,27 @@ h4 {
     font-size: 15px;
 }
 
+.front-background-img {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1000;
+    display : block;
+    /*padding: 20px;*/
+    overflow-x: hidden;
+    overflow-y: hidden;
+    width: 100%;
+    background: url(../img/benton.jpg) no-repeat center center fixed;
+}
+
+.background-fullscreen-setting {
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
 @media (min-width: 768px) {
     .main {
         position: fixed;
