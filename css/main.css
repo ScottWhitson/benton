@@ -1,0 +1,60 @@
+body {
+
+    font-family: 'Open Sans', sans-serif;
+}
+
+h4 {
+
+    font-size: 15px;
+}
+
+@media (min-width: 768px) {
+    .main {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        width: 100%;
+    }
+
+    .sidebar {
+        position: absolute;
+        bottom: 0;
+        cursor: pointer;
+        z-index:1000;
+        color: rgba(15, 15, 15, 0.87);
+        background-color: rgba(0, 0, 0, 0.31);
+        border-radius: 5px;
+        text-shadow: 0 0 1px rgba(197, 197, 197, 0.95);
+        padding: 20px;
+    }
+
+}
+
+@media (min-width: 0px) and (max-width: 767px) {
+    .main {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        display: table-cell;
+        /*padding: 20px;*/
+        overflow-x: hidden;
+        overflow-y: hidden;
+        width: 100%;
+    }
+
+    .sidebar {
+        position: fixed;
+        bottom: 0;
+        cursor: pointer;
+        z-index:1000;
+        background-color: #f5f5f5;
+        color: rgba(255, 255, 255, 0.6);
+        border-radius: 3px;
+        text-shadow: 0 0 6px rgba(197, 197, 197, 0.95);
+        padding: 10px;
+    }
+}
