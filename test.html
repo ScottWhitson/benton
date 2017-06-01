@@ -51,6 +51,8 @@
     <!-- leaflet mapbox js -->
     <script src="https://rawgit.com/mapbox/mapbox-gl-leaflet/master/leaflet-mapbox-gl.js"></script>
     <script src="js/jqcloud.js"></script>
+    <!--<script src="assets/data.js"></script>-->
+
 
 </head>
 
@@ -92,8 +94,12 @@
     </div>
 </div>
 
-<div class="container">
+<div class="container-fluid">
     <div class="row justify-content-md-center sidebar">
+        <div class="col col-md-3 text-center">
+            <h4>World Cloud</h4>
+            <div id="cloud"></div>
+        </div>
         <div class="col col-md-3 text-center">
             <h4>Gender</h4>
             <div id="genderChart"></div>
@@ -106,10 +112,7 @@
             <h4>Annual Home Income</h4>
             <div id="incomeChart"></div>
         </div>
-        <div class="col col-md-3 text-center">
-            <h4>World Cloud</h4>
-            <div id="cloud"></div>
-        </div>
+
     </div>
 
     <div class="row">
@@ -166,7 +169,8 @@
 
     document.getElementsByClassName("leaflet-control-attribution")[0].style.visibility = "hidden";
 
-d3.json('assets/data.geojson', function(data) {
+    d3.json('assets/demo.geojson', function(data) {
+
 
     //create crossfilter and dimensions
     var filter = crossfilter(data.features); //filter is the root object of crossfilter
@@ -282,16 +286,16 @@ d3.json('assets/data.geojson', function(data) {
     });
 
 
-    function generateData() {
-        var data = [];
-        var geo = geomDimension.top(Infinity);
-        for(var i = 0; i < geo.length; i++) {
-            lng = geo[i].geometry.coordinates[1];
-            lat = geo[i].geometry.coordinates[0];
-            data.push([ lat, lng ]);
-        }
-    }
-    generateData();
+//    function generateData() {
+//        var data = [];
+//        var geo = geomDimension.top(Infinity);
+//        for(var i = 0; i < geo.length; i++) {
+//            lng = geo[i].geometry.coordinates[1];
+//            lat = geo[i].geometry.coordinates[0];
+//            data.push([ lat, lng ]);
+//        }
+//    }
+//    generateData();
 
 
     function updateMap() {
@@ -302,7 +306,7 @@ d3.json('assets/data.geojson', function(data) {
             features: everything.top(Infinity)
         });
         markers.addLayer(geoJsonLayer);
-       generateData();
+//       generateData();
     }
 
 
@@ -319,37 +323,31 @@ d3.json('assets/data.geojson', function(data) {
         geomDimension.filter(function(d) {
             return map.getBounds().contains(L.geoJSON(d).getBounds())
         });
+
+
         dc.redrawAll();
 
-
         var texts = "";
+
         everything.filter(function(d) {
             if (map.getBounds().contains(L.geoJSON(d.geometry).getBounds())) {
-                texts += (" " + d.properties.value);
+                texts += (" " + d.properties.vision);
 
             }
         });
 
-        frequency_list = wordFrequency(texts);
+        var frequency_list = wordFrequency(texts);
         $('#cloud').jQCloud('destroy');
         $('#cloud').jQCloud(frequency_list,{
-            // shape: 'rectangular',
-            // colors: ["#800026", "#bd0026", "#e31a1c", "#fc4e2a", "#fd8d3c", "#feb24c", "#fed976", "#ffeda0", "#ffffcc"]
+             colors: ["#800026", "#bd0026", "#e31a1c", "#fc4e2a", "#fd8d3c", "#feb24c", "#fed976", "#ffeda0", "#ffffcc"]
         });
-
 
 
     }
 
-
     updateMapFilter();
 
-
-
-
-
-
-});
+    });
 
 </script>
 </body>

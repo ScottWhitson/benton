@@ -88,6 +88,10 @@ p{
     background-size: cover;
 }
 
+#cloud {
+    z-index: 3000;
+
+}
 @media (min-width: 768px) {
     .main {
         position: fixed;
