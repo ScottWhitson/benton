@@ -94,7 +94,7 @@
     </div>
 </div>
 
-<div class="container-fluid">
+<div class="container">
     <div class="row justify-content-md-center sidebar">
         <div class="col col-md-3 text-center">
             <h4>World Cloud</h4>
@@ -129,10 +129,10 @@
     function wordFrequency(txt){
 
         var normal_words = [
-            "to", "that", "this", "I", "them", "do", "This",
+            "to", "that", "this", "them", "do", "This",
             "the", "do", "See", "The", "and", "has", "have",
             "me", "we", "who", "what", "out", "Will", "on",
-            "are", "s", "not", "may", "been", "you", "it"
+            "are",  "not", "may", "been", "you", "it"
         ];
 
 
@@ -169,7 +169,7 @@
 
     document.getElementsByClassName("leaflet-control-attribution")[0].style.visibility = "hidden";
 
-    d3.json('assets/demo.geojson', function(data) {
+    d3.json('assets/data.geojson', function(data) {
 
 
     //create crossfilter and dimensions
@@ -338,6 +338,7 @@
 
         var frequency_list = wordFrequency(texts);
         $('#cloud').jQCloud('destroy');
+
         $('#cloud').jQCloud(frequency_list,{
              colors: ["#800026", "#bd0026", "#e31a1c", "#fc4e2a", "#fd8d3c", "#feb24c", "#fed976", "#ffeda0", "#ffffcc"]
         });
