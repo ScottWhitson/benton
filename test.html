@@ -93,27 +93,31 @@
 
 <div class="container">
     <div class="row justify-content-md-center sidebar">
-
-            <div class="col col-md-3 text-center">
-                <h4>Gender</h4>
-                <div id="genderChart"></div>
-            </div>
-            <div class="col col-md-3 text-center">
-                <h4>Ethnicity</h4>
-                <div id="ethnicityChart"></div>
-            </div>
-            <div class="col col-md-3 text-center">
-                <h4>Annual Home Income</h4>
-                <div id="incomeChart"></div>
-            </div>
+        <div class="col col-md-3 text-center">
+            <h4>Gender</h4>
+            <div id="genderChart"></div>
+        </div>
+        <div class="col col-md-3 text-center">
+            <h4>Ethnicity</h4>
+            <div id="ethnicityChart"></div>
+        </div>
+        <div class="col col-md-3 text-center">
+            <h4>Annual Home Income</h4>
+            <div id="incomeChart"></div>
+        </div>
+        <div class="col col-md-3 text-center">
+            <h4>Annual Home Income</h4>
+            <div id="wordcloud"></div>
+        </div>
     </div>
+
     <div class="row">
         <div id="map" class="main"></div>
         <p class="credit">
             <img class="credit" src="img/grouplogo.png" class="align-top" height="40px" align="right">
         </p>
     </div>
-    </div>
+</div>
 </div>
 
 <script>
@@ -282,6 +286,18 @@ d3.json('assets/demo.geojson', function(data) {
     });
 
 
+//    function generateData() {
+//        var data = [];
+//        var geo = geomDimension.top(Infinity);
+//        for(var i = 0; i < geo.length; i++) {
+//            lng = geo[i].geometry.coordinates[1];
+//            lat = geo[i].geometry.coordinates[0];
+//            data.push([ lat, lng ]);
+//        }
+//    }
+   // generateData();
+
+
     function updateMap() {
         geoJsonLayer.clearLayers();
         markers.clearLayers();
@@ -290,7 +306,7 @@ d3.json('assets/demo.geojson', function(data) {
             features: everything.top(Infinity)
         });
         markers.addLayer(geoJsonLayer);
-        generateData();
+      //  generateData();
     }
 
 
