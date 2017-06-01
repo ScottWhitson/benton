@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Benton County</title>
+    <!--libraries for mapping and data-->
+    <!--Leaflet-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" >
+    <!--DC-->
+    <link rel="stylesheet" href="https://dc-js.github.io/dc.js/css/dc.min.css">
+    <!--Bootstrap-->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <!--cloudflare animation-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+
+    <!--add a favicon-->
+    <link rel="favicon" href="img/favicon.ico" type="image/ico" />
+
+    <link rel="stylesheet" href="css/MarkerCluster.css" />
+    <link rel="stylesheet" href="css/MarkerCluster.Default.css" />
+
+    <!--CSS-->
+    <link rel="stylesheet" href="css/main.css">
+
+
+    <!--add font families-->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+
+    <script src="https://dc-js.github.io/dc.js/js/d3.js"></script>
+    <!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
+    <!--<script src="https://alexmacy.github.io/crossfilter/crossfilter.v1.min.js"></script>-->
+    <script src="https://dc-js.github.io/dc.js/js/crossfilter.js"></script>
+    <script src="https://dc-js.github.io/dc.js/js/dc.js"></script>
+
+
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+    <script src="js/leaflet.markercluster-src.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- mapbox gl js -->
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.js"></script>
+    <!-- leaflet mapbox js -->
+    <script src="http://rawgit.com/mapbox/mapbox-gl-leaflet/master/leaflet-mapbox-gl.js"></script>
+
+</head>
+
+<body>
+
+<div class="navbar navbar-inverse navbar-fixed-top navbar-toggleable-md" role="navigation">
+    <div class="container">
+        <!--<div class="container-fluid">-->
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <!--<a class="navbar-brand" href="#">GeoVisualization</a>-->
+            <a class="navbar-brand" href="#" title="GeoVisualization Example">
+                <img src="img/logo-long.png" style="width:80%; margin-top:-10px" class="d-inline-block align-top">
+            </a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="immigrants.html">Immigrant Flow</a>
+                </li>
+                <li>
+                    <a href="slr.html" target="_blank">Sea Level Rise</a>
+                </li>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Share To... <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"> <i class="fa fa-facebook-square" aria-hidden="true"></i> Facebook</a></li>
+                        <li><a href="#"> <i class="fa fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+                        <li><a href="https://alturl.com/kni7r"> <i class="fa fa-link" aria-hidden="true"></i> ShortUrl</a></li>
+                    </ul>
+
+                <li>
+                    <a href="about.html"> <i class="fa fa-github fa-lg" aria-hidden="true"></i>&nbsp;&nbsp;<span>Source Codes</span></a>
+                </li>
+
+                <li>
+                    <a href="about.html" target="_blank">About</a>
+                </li>
+
+                <li>
+                    <a data-toggle="modal" data-target="#info-modal">About Popup</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<div class="container">
+    <div class="row justify-content-md-center sidebar">
+
+            <div class="col col-md-3 text-center">
+                <h4>Gender</h4>
+                <div id="genderChart"></div>
+            </div>
+            <div class="col col-md-3 text-center">
+                <h4>Ethnicity</h4>
+                <div id="ethnicityChart"></div>
+            </div>
+            <div class="col col-md-3 text-center">
+                <h4>Annual Home Income</h4>
+                <div id="incomeChart"></div>
+            </div>
+    </div>
+    <div class="row">
+        <div id="map" class="main"></div>
+    </div>
+    </div>
+</div>
+
+<script>
+
+var map = L.map('map', {zoomControl: false, scrollWheelZoom: true, maxZoom: 21}).setView([44.570861,-123.276327], 12);
+//L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
+
+
+var gl = L.mapboxGL({
+    accessToken: 'pk.eyJ1Ijoic2F2YWdlbSIsImEiOiJjaXp1ZW1xYmEwMHdvMndwM3Y2b3V3bW5qIn0.N1fF74bH4lqXaLUaJFxsFA',
+    style: 'assets/style.json',
+    maxZoom: 21
+}).addTo(map);
+
+
+
+d3.json('assets/demo.geojson', function(data) {
+
+    //create crossfilter and dimensions
+    var filter = crossfilter(data.features); //filter is the root object of crossfilter
+    var all = filter.groupAll();  // study some of the key functions of crossfilter, such as groupAll, dimension
+    var everything = filter.dimension(function(d) {
+        return d
+    });
+
+    var geomDimension = filter.dimension(function(d) {
+        return d.geometry
+    });
+
+
+    var genderDimension = filter.dimension(function(d) {
+        return d.properties.gender
+
+    });
+
+    var genderDimensionGroup = genderDimension.group();
+
+
+
+    var ethnicityDimension = filter.dimension(function(d) {
+        return d.properties.ethnicity
+
+    });
+
+    var ethnicityDimensionGroup = ethnicityDimension.group();
+
+
+    var incomeDimension = filter.dimension(function(d) {
+        return d.properties.annhincome
+
+    });
+
+    var incomeDimensionGroup = incomeDimension.group();
+
+
+
+    var geoJsonLayer = L.geoJson({
+        type: 'FeatureCollection',
+        features: geomDimension.top(Infinity)
+    }, {
+        pointToLayer: function (feature, latlng) {
+
+            return L.circleMarker(latlng, {
+                radius: 3,
+                fillColor: "steelblue",
+                color: "steelblue",
+                weight: 1,
+                stroke: false,
+                opacity: 0.5,
+                fillOpacity: 0.7
+            })
+        },
+        onEachFeature: function (feature, layer) {
+            layer.bindTooltip(feature.properties.city);
+        }
+    });
+
+    var markers = L.markerClusterGroup();
+
+    markers.addLayer(geoJsonLayer);
+    markers.addTo(map);
+
+
+    var genderChart = dc.barChart('#genderChart');
+
+    genderChart
+        .height(120)
+        .dimension(genderDimension)
+        .group(genderDimensionGroup)
+        .elasticY(false)
+        .x(d3.scale.ordinal())
+        .xUnits(dc.units.ordinal)
+        .yAxis()
+        .ticks(4);
+
+    var ethnicityChart = dc.pieChart('#ethnicityChart');
+
+    ethnicityChart
+        .height(120)
+        .dimension(ethnicityDimension)
+        .group(ethnicityDimensionGroup)
+        .innerRadius(25);
+
+
+    var incomeChart = dc.barChart('#incomeChart');
+
+    incomeChart
+        .height(120)
+        .dimension(incomeDimension)
+        .group(incomeDimensionGroup)
+        .elasticY(false)
+        .x(d3.scale.ordinal())
+        .xUnits(dc.units.ordinal)
+        .yAxis()
+        .ticks(4);
+
+
+    dc.renderAll();
+
+
+    //chart listeners
+    genderChart.on('filtered', function(chart, filter) {
+        updateMap()
+    });
+
+    ethnicityChart.on('filtered', function(chart, filter) {
+        updateMap()
+    });
+
+    incomeChart.on('filtered', function(chart, filter) {
+        updateMap()
+    });
+
+
+    function updateMap() {
+        geoJsonLayer.clearLayers();
+        markers.clearLayers();
+        geoJsonLayer.addData({
+            type: 'FeatureCollection',
+            features: everything.top(Infinity)
+        });
+        markers.addLayer(geoJsonLayer);
+    }
+
+
+    //map listeners
+    map.on('moveend', function() {
+        updateMapFilter()
+    });
+    map.on('zoomend', function() {
+        updateMapFilter()
+    });
+
+
+    function updateMapFilter() {
+        geomDimension.filter(function(d) {
+            return map.getBounds().contains(L.geoJSON(d).getBounds())
+        });
+        dc.redrawAll();
+    }
+
+
+});
+
+</script>
+</body>
+</html>
