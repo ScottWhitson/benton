@@ -3,10 +3,94 @@ body {
     font-family: 'Open Sans', sans-serif;
 }
 
-h4 {
+body {
 
-    font-size: 15px;
+    color: rgba(0, 0, 0, 1);
+    font-family: 'Titillium Web', serif;
+
 }
+
+h1{
+    font-size: 80px;
+    font-weight:bold;
+    color: rgba(0, 0, 0, 0.9);
+    margin-top: 5%;
+    margin-left: 4%;
+    text-shadow: 0 0 3px rgba(255, 255, 255, 1);
+    font-family: 'Fira Sans Condensed', serif;
+}
+
+h2{
+    font-size:25px;
+    /*margin-top: 20px;*/
+    padding-left: 17%;
+    padding-right: 17%;
+    color: rgba(0, 0, 0, 0.9);
+    text-shadow: 0 0 1px rgba(255, 255, 255, 1);
+    font-family: 'Titillium Web', serif;
+}
+
+.h2_overview{
+    font-size:25px;
+    /*margin-top: 20px;*/
+    padding-left: 5%;
+    padding-right: 28%;
+    padding-bottom: 2%;
+    color: whitesmoke;
+    text-shadow: 0 0 1px black;
+    font-family: 'Titillium Web', serif;
+    margin-bottom: 0px;
+    position:absolute;
+    bottom: 4%;
+
+}
+
+h3{
+    font-weight:bold;
+    color: #000000;
+    font-family: 'Titillium Web', serif;
+    font-size:30px;
+    margin-top: -15%;
+    margin-bottom: 2.5%;
+    color: rgba(0, 0, 0, 0.95);
+    text-shadow: 0 0 1px rgba(255, 255, 255, 1);
+}
+
+.h3_info{
+    font-size:50px;
+    margin-top: -3%;
+}
+
+h4{
+    font-weight: bold;
+}
+
+h5{
+    font-weight:bold;
+    text-align: justify;
+    font-size: 20px;
+    color: rgba(0, 0, 0, 0.95);
+}
+
+p{
+    font-size: 18px;
+    display: inline;
+    color:black
+}
+
+
+.credit {
+    font-size:14px;
+    margin-top:0px;
+    color: white;
+    text-shadow: 0 0 4px black;
+    display:block;
+    position:absolute;
+    right: 1%;
+    bottom: 0px;
+    align-content: right
+}
+
 
 .front-background-img {
     position: fixed;
