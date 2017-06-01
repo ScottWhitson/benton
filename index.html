@@ -43,7 +43,7 @@
     <!-- mapbox gl js -->
     <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.js"></script>
     <!-- leaflet mapbox js -->
-    <script src="http://rawgit.com/mapbox/mapbox-gl-leaflet/master/leaflet-mapbox-gl.js"></script>
+    <script src="https://rawgit.com/mapbox/mapbox-gl-leaflet/master/leaflet-mapbox-gl.js"></script>
 
 </head>
 
@@ -97,186 +97,186 @@
 <div class="container">
     <div class="row justify-content-md-center sidebar">
 
-            <div class="col col-md-3 text-center">
-                <h4>Gender</h4>
-                <div id="genderChart"></div>
-            </div>
-            <div class="col col-md-3 text-center">
-                <h4>Ethnicity</h4>
-                <div id="ethnicityChart"></div>
-            </div>
-            <div class="col col-md-3 text-center">
-                <h4>Annual Home Income</h4>
-                <div id="incomeChart"></div>
-            </div>
+        <div class="col col-md-3 text-center">
+            <h4>Gender</h4>
+            <div id="genderChart"></div>
+        </div>
+        <div class="col col-md-3 text-center">
+            <h4>Ethnicity</h4>
+            <div id="ethnicityChart"></div>
+        </div>
+        <div class="col col-md-3 text-center">
+            <h4>Annual Home Income</h4>
+            <div id="incomeChart"></div>
+        </div>
     </div>
     <div class="row">
         <div id="map" class="main"></div>
     </div>
-    </div>
+</div>
 </div>
 
 <script>
 
-var map = L.map('map', {zoomControl: false, scrollWheelZoom: true, maxZoom: 21}).setView([44.570861,-123.276327], 12);
-//L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
+    var map = L.map('map', {zoomControl: false, scrollWheelZoom: true, maxZoom: 21}).setView([44.570861,-123.276327], 12);
+    //L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
 
 
-var gl = L.mapboxGL({
-    accessToken: 'pk.eyJ1Ijoic2F2YWdlbSIsImEiOiJjaXp1ZW1xYmEwMHdvMndwM3Y2b3V3bW5qIn0.N1fF74bH4lqXaLUaJFxsFA',
-    style: 'assets/style.json',
-    maxZoom: 21
-}).addTo(map);
-
-
-
-d3.json('assets/demo.geojson', function(data) {
-
-    //create crossfilter and dimensions
-    var filter = crossfilter(data.features); //filter is the root object of crossfilter
-    var all = filter.groupAll();  // study some of the key functions of crossfilter, such as groupAll, dimension
-    var everything = filter.dimension(function(d) {
-        return d
-    });
-
-    var geomDimension = filter.dimension(function(d) {
-        return d.geometry
-    });
-
-
-    var genderDimension = filter.dimension(function(d) {
-        return d.properties.gender
-
-    });
-
-    var genderDimensionGroup = genderDimension.group();
+    var gl = L.mapboxGL({
+        accessToken: 'pk.eyJ1Ijoic2F2YWdlbSIsImEiOiJjaXp1ZW1xYmEwMHdvMndwM3Y2b3V3bW5qIn0.N1fF74bH4lqXaLUaJFxsFA',
+        style: 'assets/style.json',
+        maxZoom: 21
+    }).addTo(map);
 
 
 
-    var ethnicityDimension = filter.dimension(function(d) {
-        return d.properties.ethnicity
+    d3.json('assets/demo.geojson', function(data) {
 
-    });
+        //create crossfilter and dimensions
+        var filter = crossfilter(data.features); //filter is the root object of crossfilter
+        var all = filter.groupAll();  // study some of the key functions of crossfilter, such as groupAll, dimension
+        var everything = filter.dimension(function(d) {
+            return d
+        });
 
-    var ethnicityDimensionGroup = ethnicityDimension.group();
-
-
-    var incomeDimension = filter.dimension(function(d) {
-        return d.properties.annhincome
-
-    });
-
-    var incomeDimensionGroup = incomeDimension.group();
+        var geomDimension = filter.dimension(function(d) {
+            return d.geometry
+        });
 
 
+        var genderDimension = filter.dimension(function(d) {
+            return d.properties.gender
 
-    var geoJsonLayer = L.geoJson({
-        type: 'FeatureCollection',
-        features: geomDimension.top(Infinity)
-    }, {
-        pointToLayer: function (feature, latlng) {
+        });
 
-            return L.circleMarker(latlng, {
-                radius: 3,
-                fillColor: "steelblue",
-                color: "steelblue",
-                weight: 1,
-                stroke: false,
-                opacity: 0.5,
-                fillOpacity: 0.7
-            })
-        },
-        onEachFeature: function (feature, layer) {
-            layer.bindTooltip(feature.properties.city);
-        }
-    });
-
-    var markers = L.markerClusterGroup();
-
-    markers.addLayer(geoJsonLayer);
-    markers.addTo(map);
+        var genderDimensionGroup = genderDimension.group();
 
 
-    var genderChart = dc.barChart('#genderChart');
 
-    genderChart
-        .height(120)
-        .dimension(genderDimension)
-        .group(genderDimensionGroup)
-        .elasticY(false)
-        .x(d3.scale.ordinal())
-        .xUnits(dc.units.ordinal)
-        .yAxis()
-        .ticks(4);
+        var ethnicityDimension = filter.dimension(function(d) {
+            return d.properties.ethnicity
 
-    var ethnicityChart = dc.pieChart('#ethnicityChart');
+        });
 
-    ethnicityChart
-        .height(120)
-        .dimension(ethnicityDimension)
-        .group(ethnicityDimensionGroup)
-        .innerRadius(25);
+        var ethnicityDimensionGroup = ethnicityDimension.group();
 
 
-    var incomeChart = dc.barChart('#incomeChart');
+        var incomeDimension = filter.dimension(function(d) {
+            return d.properties.annhincome
 
-    incomeChart
-        .height(120)
-        .dimension(incomeDimension)
-        .group(incomeDimensionGroup)
-        .elasticY(false)
-        .x(d3.scale.ordinal())
-        .xUnits(dc.units.ordinal)
-        .yAxis()
-        .ticks(4);
+        });
+
+        var incomeDimensionGroup = incomeDimension.group();
 
 
-    dc.renderAll();
 
-
-    //chart listeners
-    genderChart.on('filtered', function(chart, filter) {
-        updateMap()
-    });
-
-    ethnicityChart.on('filtered', function(chart, filter) {
-        updateMap()
-    });
-
-    incomeChart.on('filtered', function(chart, filter) {
-        updateMap()
-    });
-
-
-    function updateMap() {
-        geoJsonLayer.clearLayers();
-        markers.clearLayers();
-        geoJsonLayer.addData({
+        var geoJsonLayer = L.geoJson({
             type: 'FeatureCollection',
-            features: everything.top(Infinity)
+            features: geomDimension.top(Infinity)
+        }, {
+            pointToLayer: function (feature, latlng) {
+
+                return L.circleMarker(latlng, {
+                    radius: 3,
+                    fillColor: "steelblue",
+                    color: "steelblue",
+                    weight: 1,
+                    stroke: false,
+                    opacity: 0.5,
+                    fillOpacity: 0.7
+                })
+            },
+            onEachFeature: function (feature, layer) {
+                layer.bindTooltip(feature.properties.city);
+            }
         });
+
+        var markers = L.markerClusterGroup();
+
         markers.addLayer(geoJsonLayer);
-    }
+        markers.addTo(map);
 
 
-    //map listeners
-    map.on('moveend', function() {
-        updateMapFilter()
-    });
-    map.on('zoomend', function() {
-        updateMapFilter()
-    });
+        var genderChart = dc.barChart('#genderChart');
+
+        genderChart
+            .height(120)
+            .dimension(genderDimension)
+            .group(genderDimensionGroup)
+            .elasticY(false)
+            .x(d3.scale.ordinal())
+            .xUnits(dc.units.ordinal)
+            .yAxis()
+            .ticks(4);
+
+        var ethnicityChart = dc.pieChart('#ethnicityChart');
+
+        ethnicityChart
+            .height(120)
+            .dimension(ethnicityDimension)
+            .group(ethnicityDimensionGroup)
+            .innerRadius(25);
 
 
-    function updateMapFilter() {
-        geomDimension.filter(function(d) {
-            return map.getBounds().contains(L.geoJSON(d).getBounds())
+        var incomeChart = dc.barChart('#incomeChart');
+
+        incomeChart
+            .height(120)
+            .dimension(incomeDimension)
+            .group(incomeDimensionGroup)
+            .elasticY(false)
+            .x(d3.scale.ordinal())
+            .xUnits(dc.units.ordinal)
+            .yAxis()
+            .ticks(4);
+
+
+        dc.renderAll();
+
+
+        //chart listeners
+        genderChart.on('filtered', function(chart, filter) {
+            updateMap()
         });
-        dc.redrawAll();
-    }
+
+        ethnicityChart.on('filtered', function(chart, filter) {
+            updateMap()
+        });
+
+        incomeChart.on('filtered', function(chart, filter) {
+            updateMap()
+        });
 
 
-});
+        function updateMap() {
+            geoJsonLayer.clearLayers();
+            markers.clearLayers();
+            geoJsonLayer.addData({
+                type: 'FeatureCollection',
+                features: everything.top(Infinity)
+            });
+            markers.addLayer(geoJsonLayer);
+        }
+
+
+        //map listeners
+        map.on('moveend', function() {
+            updateMapFilter()
+        });
+        map.on('zoomend', function() {
+            updateMapFilter()
+        });
+
+
+        function updateMapFilter() {
+            geomDimension.filter(function(d) {
+                return map.getBounds().contains(L.geoJSON(d).getBounds())
+            });
+            dc.redrawAll();
+        }
+
+
+    });
 
 </script>
 </body>
