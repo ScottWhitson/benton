@@ -153,19 +153,17 @@
         return newArray;
     }
 
-
-
     var map = L.map('map', {zoomControl: false, scrollWheelZoom: true, maxZoom: 21}).setView([44.570861,-123.276327], 12);
-//L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
 
+    //L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
 
-var gl = L.mapboxGL({
-    accessToken: 'pk.eyJ1Ijoid2hpdHNvbnMiLCJhIjoiY2l0eW15ZDJ6MDhrbTJ5bjRuZGx1Z3lmZiJ9.4RXjTjxBUVzG2X3mdtcSZQ',
-    style: 'assets/outdoors_style.json',
-    maxZoom: 21
-}).addTo(map);
+    var gl = L.mapboxGL({
+        accessToken: 'pk.eyJ1Ijoid2hpdHNvbnMiLCJhIjoiY2l0eW15ZDJ6MDhrbTJ5bjRuZGx1Z3lmZiJ9.4RXjTjxBUVzG2X3mdtcSZQ',
+        style: 'assets/outdoors_style.json',
+        maxZoom: 21
+    }).addTo(map);
 
-document.getElementsByClassName("leaflet-control-attribution")[0].style.visibility = "hidden";
+    document.getElementsByClassName("leaflet-control-attribution")[0].style.visibility = "hidden";
 
 d3.json('assets/demo.geojson', function(data) {
 
@@ -187,8 +185,6 @@ d3.json('assets/demo.geojson', function(data) {
     });
 
     var genderDimensionGroup = genderDimension.group();
-
-
 
     var ethnicityDimension = filter.dimension(function(d) {
         return d.properties.ethnicity
