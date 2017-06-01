@@ -152,6 +152,8 @@
                 newArray.push({text: word, weight: 1});
             }
         });
+
+
         return newArray;
     }
 
@@ -263,19 +265,6 @@
 
 
 
-
-    //    function generateData() {
-    //        var data = [];
-    //        var geo = geomDimension.top(Infinity);
-    //        for(var i = 0; i < geo.length; i++) {
-    //            lng = geo[i].geometry.coordinates[1];
-    //            lat = geo[i].geometry.coordinates[0];
-    //            data.push([ lat, lng ]);
-    //        }
-    //    }
-    //    generateData();
-
-
         //chart listeners
         genderChart.on('filtered', function(chart, filter) {
             updateMap()
@@ -300,7 +289,6 @@
             markers.addLayer(geoJsonLayer);
     //       generateData();
             dc.renderAll();
-
         }
 
         //map listeners
@@ -314,18 +302,13 @@
 
 
     function updateMapFilter() {
-        geomDimension.filter(function(d) {
-            return map.getBounds().contains(L.geoJSON(d).getBounds())
-        });
-
-
 
         var texts = "";
-
         everything.filter(function(d) {
             if (map.getBounds().contains(L.geoJSON(d.geometry).getBounds())) {
                 texts += (" " + d.properties.vision);
             }
+            return map.getBounds().contains(L.geoJSON(d.geometry).getBounds())
         });
 
 
@@ -338,8 +321,6 @@
         dc.redrawAll();
 
     }
-
-    // updateMapFilter();
 
     });
 

@@ -14,6 +14,7 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Courgette|Inconsolata|Titillium+Web|Fira+Sans+Condensed" />
     <!--Bootstrap-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="css/jqcloud.css" />
 
     <!--add a favicon-->
     <link rel="favicon" href="img/favicon.ico" type="image/ico" />
@@ -23,7 +24,6 @@
 
     <!--CSS-->
     <link rel="stylesheet" href="css/main.css">
-
 
     <!--add font families-->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
@@ -35,8 +35,11 @@
     <script src="https://dc-js.github.io/dc.js/js/crossfilter.js"></script>
     <script src="https://dc-js.github.io/dc.js/js/dc.js"></script>
 
-
     <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+
+    <script src="https://d3js.org/d3-hexbin.v0.2.min.js"></script>
+
+
     <script src="js/leaflet.markercluster-src.js"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -46,6 +49,7 @@
     <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.js"></script>
     <!-- leaflet mapbox js -->
     <script src="https://rawgit.com/mapbox/mapbox-gl-leaflet/master/leaflet-mapbox-gl.js"></script>
+    <script src="js/jqcloud.js"></script>
 
 </head>
 
@@ -89,6 +93,10 @@
 
 <div class="container">
     <div class="row justify-content-md-center sidebar">
+        <div class="col col-md-3">
+            <h4>World Cloud</h4>
+            <div id="cloud"></div>
+        </div>
         <div class="col col-md-3 text-center">
             <h4>Gender</h4>
             <div id="genderChart"></div>
@@ -101,10 +109,6 @@
             <h4>Annual Home Income</h4>
             <div id="incomeChart"></div>
         </div>
-        <div class="col col-md-3 text-center">
-            <h4>Annual Home Income</h4>
-            <div id="wordcloud"></div>
-        </div>
     </div>
 
     <div class="row">
@@ -113,170 +117,210 @@
             <img class="credit" src="img/grouplogo.png" class="align-top" height="40px" align="right">
         </p>
     </div>
-    </div>
+</div>
 </div>
 
 <script>
 
-var map = L.map('map', {zoomControl: false, scrollWheelZoom: true, maxZoom: 21}).setView([44.570861,-123.276327], 12);
-//L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
+    function wordFrequency(txt) {
+
+//        var normal_words = [
+//            " to ", " that ", "this", "them", "do", "This",
+//            "the", "do", "See", "The", "and", "has", "have",
+//            "me", "we", "who", "what", "out", "Will", " on ",
+//            "are",  "not", "may", "been", "you", "it"
+//        ];
+
+        var normal_words = [
+        ];
+
+        for (var i = 0; i < normal_words.length; i++) {
+            txt = txt.replace(normal_words[i], "");
+        }
+
+        txt = txt.replace("  ", "");
+
+        var wordArray = txt.split(/[ .?!,*'"]/);
+        var newArray = [], wordObj;
+        wordArray.forEach(function (word) {
+            wordObj = newArray.filter(function (w){
+                return w.text == word;
+            });
+            if (wordObj.length) {
+                wordObj[0].weight += 1;
+            } else {
+                newArray.push({text: word, weight: 1});
+            }
+        });
 
 
-var gl = L.mapboxGL({
-    accessToken: 'pk.eyJ1Ijoid2hpdHNvbnMiLCJhIjoiY2l0eW15ZDJ6MDhrbTJ5bjRuZGx1Z3lmZiJ9.4RXjTjxBUVzG2X3mdtcSZQ',
-    style: 'assets/outdoors_style.json',
-    maxZoom: 21
-}).addTo(map);
+        return newArray;
+    }
 
-document.getElementsByClassName("leaflet-control-attribution")[0].style.visibility = "hidden";
+    var map = L.map('map', {zoomControl: false, scrollWheelZoom: true, maxZoom: 21}).setView([44.570861,-123.276327], 12);
 
-d3.json('assets/demo.geojson', function(data) {
+    //L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
 
-    //create crossfilter and dimensions
-    var filter = crossfilter(data.features); //filter is the root object of crossfilter
-    var all = filter.groupAll();  // study some of the key functions of crossfilter, such as groupAll, dimension
-    var everything = filter.dimension(function(d) {
-        return d
-    });
+    var gl = L.mapboxGL({
+        accessToken: 'pk.eyJ1Ijoid2hpdHNvbnMiLCJhIjoiY2l0eW15ZDJ6MDhrbTJ5bjRuZGx1Z3lmZiJ9.4RXjTjxBUVzG2X3mdtcSZQ',
+        style: 'assets/outdoors_style.json',
+        maxZoom: 21
+    }).addTo(map);
 
-    var geomDimension = filter.dimension(function(d) {
-        return d.geometry
-    });
+    document.getElementsByClassName("leaflet-control-attribution")[0].style.visibility = "hidden";
+
+    d3.json('assets/data.geojson', function(data) {
 
 
-    var genderDimension = filter.dimension(function(d) {
-        return d.properties.gender
+        //create crossfilter and dimensions
+        var filter = crossfilter(data.features); //filter is the root object of crossfilter
+        var all = filter.groupAll();  // study some of the key functions of crossfilter, such as groupAll, dimension
+        var everything = filter.dimension(function(d) {
+            return d
+        });
 
-    });
-
-    var genderDimensionGroup = genderDimension.group();
-
-
-
-    var ethnicityDimension = filter.dimension(function(d) {
-        return d.properties.ethnicity
-
-    });
-
-    var ethnicityDimensionGroup = ethnicityDimension.group();
+        var geomDimension = filter.dimension(function(d) {
+            return d.geometry
+        });
 
 
-    var incomeDimension = filter.dimension(function(d) {
-        return d.properties.annhincome
+        var genderDimension = filter.dimension(function(d) {
+            return d.properties.gender
 
-    });
+        });
 
-    var incomeDimensionGroup = incomeDimension.group();
+        var genderDimensionGroup = genderDimension.group();
+
+        var ethnicityDimension = filter.dimension(function(d) {
+            return d.properties.ethnicity
+
+        });
+
+        var ethnicityDimensionGroup = ethnicityDimension.group();
+
+
+        var incomeDimension = filter.dimension(function(d) {
+            return d.properties.income
+        });
+
+        var incomeDimensionGroup = incomeDimension.group();
+
+
+        var geoJsonLayer = L.geoJson({
+            type: 'FeatureCollection',
+            features: geomDimension.top(Infinity)
+        }, {
+            pointToLayer: function (feature, latlng) {
+
+                return L.circleMarker(latlng, {
+                    radius: 3,
+                    fillColor: "steelblue",
+                    color: "steelblue",
+                    weight: 1,
+                    stroke: false,
+                    opacity: 0.5,
+                    fillOpacity: 0.7
+                })
+            },
+            onEachFeature: function (feature, layer) {
+                layer.bindTooltip(feature.properties.city);
+            }
+        });
+
+        var markers = L.markerClusterGroup();
+        markers.addLayer(geoJsonLayer);
+        markers.addTo(map);
+
+
+        var genderChart = dc.barChart('#genderChart');
+        genderChart
+            .height(120)
+            .dimension(genderDimension)
+            .group(genderDimensionGroup)
+            .elasticY(false)
+            .x(d3.scale.ordinal())
+            .xUnits(dc.units.ordinal)
+            .yAxis()
+            .ticks(4);
+
+        var ethnicityChart = dc.pieChart('#ethnicityChart');
+        ethnicityChart
+            .height(120)
+            .dimension(ethnicityDimension)
+            .group(ethnicityDimensionGroup)
+            .innerRadius(25);
+
+        var incomeChart = dc.barChart('#incomeChart');
+        incomeChart
+            .height(120)
+            .dimension(incomeDimension)
+            .group(incomeDimensionGroup)
+            .elasticY(false)
+            .x(d3.scale.ordinal())
+            .xUnits(dc.units.ordinal)
+            .yAxis()
+            .ticks(4);
+
+        dc.renderAll();
 
 
 
-    var geoJsonLayer = L.geoJson({
-        type: 'FeatureCollection',
-        features: geomDimension.top(Infinity)
-    }, {
-        pointToLayer: function (feature, latlng) {
+        //chart listeners
+        genderChart.on('filtered', function(chart, filter) {
+            updateMap()
+        });
 
-            return L.circleMarker(latlng, {
-                radius: 3,
-                fillColor: "steelblue",
-                color: "steelblue",
-                weight: 1,
-                stroke: false,
-                opacity: 0.5,
-                fillOpacity: 0.7
-            })
-        },
-        onEachFeature: function (feature, layer) {
-            layer.bindTooltip(feature.properties.city);
+        ethnicityChart.on('filtered', function(chart, filter) {
+            updateMap()
+        });
+
+        incomeChart.on('filtered', function(chart, filter) {
+            updateMap()
+        });
+
+
+        function updateMap() {
+            geoJsonLayer.clearLayers();
+            markers.clearLayers();
+            geoJsonLayer.addData({
+                type: 'FeatureCollection',
+                features: everything.top(Infinity)
+            });
+            markers.addLayer(geoJsonLayer);
+            //       generateData();
+            dc.renderAll();
+        }
+
+        //map listeners
+        map.on('moveend', function() {
+            updateMapFilter()
+        });
+
+        map.on('zoomend', function() {
+            updateMapFilter()
+        });
+
+
+        function updateMapFilter() {
+
+            var texts = "";
+            everything.filter(function(d) {
+                if (map.getBounds().contains(L.geoJSON(d.geometry).getBounds())) {
+                    texts += (" " + d.properties.vision);
+                }
+                return map.getBounds().contains(L.geoJSON(d.geometry).getBounds())
+            });
+
+
+            var frequency_list = wordFrequency(texts);
+            $('#cloud').jQCloud('destroy');
+            $('#cloud').jQCloud(frequency_list,{
+                colors: ["#800026", "#bd0026", "#e31a1c", "#fc4e2a", "#fd8d3c", "#feb24c", "#fed976", "#ffeda0", "#ffffcc"]
+            });
+
+            dc.redrawAll();
         }
     });
-
-    var markers = L.markerClusterGroup();
-
-    markers.addLayer(geoJsonLayer);
-    markers.addTo(map);
-
-
-    var genderChart = dc.barChart('#genderChart');
-
-    genderChart
-        .height(120)
-        .dimension(genderDimension)
-        .group(genderDimensionGroup)
-        .elasticY(false)
-        .x(d3.scale.ordinal())
-        .xUnits(dc.units.ordinal)
-        .yAxis()
-        .ticks(4);
-
-    var ethnicityChart = dc.pieChart('#ethnicityChart');
-
-    ethnicityChart
-        .height(120)
-        .dimension(ethnicityDimension)
-        .group(ethnicityDimensionGroup)
-        .innerRadius(25);
-
-
-    var incomeChart = dc.barChart('#incomeChart');
-
-    incomeChart
-        .height(120)
-        .dimension(incomeDimension)
-        .group(incomeDimensionGroup)
-        .elasticY(false)
-        .x(d3.scale.ordinal())
-        .xUnits(dc.units.ordinal)
-        .yAxis()
-        .ticks(4);
-
-
-    dc.renderAll();
-
-
-    //chart listeners
-    genderChart.on('filtered', function(chart, filter) {
-        updateMap()
-    });
-
-    ethnicityChart.on('filtered', function(chart, filter) {
-        updateMap()
-    });
-
-    incomeChart.on('filtered', function(chart, filter) {
-        updateMap()
-    });
-
-
-    function updateMap() {
-        geoJsonLayer.clearLayers();
-        markers.clearLayers();
-        geoJsonLayer.addData({
-            type: 'FeatureCollection',
-            features: everything.top(Infinity)
-        });
-        markers.addLayer(geoJsonLayer);
-    }
-
-
-    //map listeners
-    map.on('moveend', function() {
-        updateMapFilter()
-    });
-    map.on('zoomend', function() {
-        updateMapFilter()
-    });
-
-
-    function updateMapFilter() {
-        geomDimension.filter(function(d) {
-            return map.getBounds().contains(L.geoJSON(d).getBounds())
-        });
-        dc.redrawAll();
-    }
-
-
-});
 
 </script>
 </body>
