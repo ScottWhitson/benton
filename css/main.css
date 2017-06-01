@@ -90,8 +90,13 @@ p{
 
 #cloud {
     z-index: 3000;
-
+    width: 100%;
+    height: 120px;
+    position: relative;
+    cursor: pointer;
+    color: rgba(15, 15, 15, 0.87);
 }
+
 @media (min-width: 768px) {
     .main {
         position: fixed;
