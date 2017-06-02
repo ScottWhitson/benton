@@ -149,7 +149,9 @@
             "around", "how", "In", "us", "__", "just", "too", "sure", "area", "into", "per", "$",
             "3", "there", "At", "13", "gotten", "going", "including", "areas", "25", "wont", "(e",
             "here", "go", "my", "few", "ag", "who", "over", "--", "along", "here", "see", "few", "other",
-            "last", "N", "put", "2000", "off", "county", "d", "x%", "re:", "d", "~", "i", "î", "they"
+            "last", "N", "put", "2000", "off", "county", "d", "x%", "re:", "d", "~", "i", "î", "they",
+            "have", "am", "(I", "(&", "II", "21", "time", "through", "B", "time", "well", "those",
+            "yet", "than", "oh", "being", "street", "things", "C", "VS", "from"
         ];
 
         newArray.filter(function(word){
@@ -296,7 +298,7 @@
 
 	        var texts = "";
 	        everything.top(Infinity).filter(function(d) {
-		        return  texts += (" " + d.properties.vision);
+		        return  texts += (" " + d.properties.comment);
 	        });
 
 
@@ -324,7 +326,7 @@
             var texts = "";
             everything.filter(function(d) {
                 if (map.getBounds().contains(L.geoJSON(d.geometry).getBounds())) {
-                    texts += (" " + d.properties.vision);
+                    texts += (" " + d.properties.comment);
                 }
                 return map.getBounds().contains(L.geoJSON(d.geometry).getBounds())
             });
