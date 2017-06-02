@@ -25,7 +25,6 @@
     <!--CSS-->
     <link rel="stylesheet" href="css/main.css">
 
-
     <!--add font families-->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 
@@ -50,6 +49,7 @@
     <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.js"></script>
     <!-- leaflet mapbox js -->
     <script src="https://rawgit.com/mapbox/mapbox-gl-leaflet/master/leaflet-mapbox-gl.js"></script>
+    <script src="js/jqcloud.js"></script>
 
 </head>
 
@@ -93,6 +93,10 @@
 
 <div class="container">
     <div class="row justify-content-md-center sidebar">
+        <div class="col col-md-3">
+            <h4>World Cloud</h4>
+            <div id="cloud"></div>
+        </div>
         <div class="col col-md-3 text-center">
             <h4>Gender</h4>
             <div id="genderChart"></div>
@@ -104,10 +108,6 @@
         <div class="col col-md-3 text-center">
             <h4>Annual Home Income</h4>
             <div id="incomeChart"></div>
-        </div>
-        <div class="col col-md-3 text-center">
-            <h4>World Cloud</h4>
-            <div id="cloud"></div>
         </div>
     </div>
 
@@ -122,233 +122,225 @@
 
 <script>
 
-    function wordFrequency(txt){
+	function wordFrequency(txt) {
+
+		var wordArray = txt.split(/[ .?!,*'"]/);
+		var newArray = [], filteredArray = [], wordObj;
+		wordArray.forEach(function (word) {
+			wordObj = newArray.filter(function (w){
+				return w.text == word;
+			});
+			if (wordObj.length) {
+				wordObj[0].weight += 1;
+			} else {
+				newArray.push({text: word, weight: 1});
+			}
+		});
+
+		var words = ["", "that", "this", "we", "I", "you", "he", "she",
+			"and", "be", "are", "is", "was", "were", "Could", "Would", "of", "it",
+			"with", "A", "s", "t", "with", "of", "to", "the", "for", "in", "not", ")",
+			"&", "our", "more", "people", "at", "We", "_", "our", "so", "throughout", "5",
+			"maybe", "if", "use", "by", "as", "all", "4", "The", "on", "a", "on", "lots",
+			"The", "-", "All", "but", "can", "up", "or", "need", "like", "will", "should",
+			"way", "its", "do", "make", "between", "null", "/", "1", "want", "what", "It",
+			"an", "g", "It", "g", "don", "re", "think", "lot", "m", "re", "get", "good", "must",
+			"2", "-", "them", "had", "take", "out", "etc", "has", "would", "20", "no", "_",
+			"around", "how", "In", "us", "__", "just", "too", "sure", "area", "into", "per", "$",
+			"3", "there", "At", "13", "gotten", "going", "including", "areas", "25", "wont"
+		];
+
+		newArray.filter(function(word){
+			if (!words.includes(word.text)) {
+				filteredArray.push(word);
+			}
+		})
+
+		return filteredArray;
+	}
+
+	var map = L.map('map', {zoomControl: false, scrollWheelZoom: true, maxZoom: 21}).setView([44.570861,-123.276327], 12);
+
+	//L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
+
+	var gl = L.mapboxGL({
+		accessToken: 'pk.eyJ1Ijoid2hpdHNvbnMiLCJhIjoiY2l0eW15ZDJ6MDhrbTJ5bjRuZGx1Z3lmZiJ9.4RXjTjxBUVzG2X3mdtcSZQ',
+		style: 'assets/outdoors_style.json',
+		maxZoom: 21
+	}).addTo(map);
+
+	document.getElementsByClassName("leaflet-control-attribution")[0].style.visibility = "hidden";
+
+	d3.json('assets/data.geojson', function(data) {
+
+
+		//create crossfilter and dimensions
+		var filter = crossfilter(data.features); //filter is the root object of crossfilter
+		var all = filter.groupAll();  // study some of the key functions of crossfilter, such as groupAll, dimension
+		var everything = filter.dimension(function(d) {
+			return d
+		});
+
+		var geomDimension = filter.dimension(function(d) {
+			return d.geometry
+		});
+
+
+		var genderDimension = filter.dimension(function(d) {
+			return d.properties.gender
+
+		});
+
+		var genderDimensionGroup = genderDimension.group();
+
+		var ethnicityDimension = filter.dimension(function(d) {
+			return d.properties.ethnicity
+
+		});
+
+		var ethnicityDimensionGroup = ethnicityDimension.group();
+
+
+		var incomeDimension = filter.dimension(function(d) {
+			return d.properties.income
+		});
+
+		var incomeDimensionGroup = incomeDimension.group();
+
+
+		var geoJsonLayer = L.geoJson({
+			type: 'FeatureCollection',
+			features: geomDimension.top(Infinity)
+		}, {
+			pointToLayer: function (feature, latlng) {
+
+				return L.circleMarker(latlng, {
+					radius: 3,
+					fillColor: "steelblue",
+					color: "steelblue",
+					weight: 1,
+					stroke: false,
+					opacity: 0.5,
+					fillOpacity: 0.7
+				})
+			},
+			onEachFeature: function (feature, layer) {
+				layer.bindTooltip(feature.properties.city);
+			}
+		});
+
+		var markers = L.markerClusterGroup();
+		markers.addLayer(geoJsonLayer);
+		markers.addTo(map);
+
+
+		var genderChart = dc.barChart('#genderChart');
+		genderChart
+			.height(120)
+			.dimension(genderDimension)
+			.group(genderDimensionGroup)
+			.elasticY(false)
+			.x(d3.scale.ordinal())
+			.xUnits(dc.units.ordinal)
+			.yAxis()
+			.ticks(4);
 
-        var normal_words = [
-            "to", "that", "this", "I", "them", "do", "This",
-            "the", "do", "See", "The", "and", "has", "have",
-            "me", "we", "who", "what", "out", "Will", "on",
-            "are", "s", "not", "may", "been", "you", "it"
-        ];
+		var ethnicityChart = dc.pieChart('#ethnicityChart');
+		ethnicityChart
+			.height(120)
+			.dimension(ethnicityDimension)
+			.group(ethnicityDimensionGroup)
+			.innerRadius(25);
 
+		var incomeChart = dc.barChart('#incomeChart');
+		incomeChart
+			.height(120)
+			.dimension(incomeDimension)
+			.group(incomeDimensionGroup)
+			.elasticY(false)
+			.x(d3.scale.ordinal())
+			.xUnits(dc.units.ordinal)
+			.yAxis()
+			.ticks(4);
 
-        for (var i = 0; i < normal_words.length; i++) {
-            txt = txt.replace(normal_words[i], "");
-        }
+		dc.renderAll();
 
-        txt = txt.replace("  ", "");
 
-        var wordArray = txt.split(/[ .?!,*'"]/);
-        var newArray = [], wordObj;
-        wordArray.forEach(function (word) {
-            wordObj = newArray.filter(function (w){
-                return w.text == word;
-            });
-            if (wordObj.length) {
-                wordObj[0].weight += 1;
-            } else {
-                newArray.push({text: word, weight: 1});
-            }
-        });
-        return newArray;
-    }
 
-    var map = L.map('map', {zoomControl: false, scrollWheelZoom: true, maxZoom: 21}).setView([44.570861,-123.276327], 12);
+		//chart listeners
+		genderChart.on('filtered', function(chart, filter) {
+			updateMap()
+		});
 
-    //L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
+		ethnicityChart.on('filtered', function(chart, filter) {
+			updateMap()
+		});
 
-    var gl = L.mapboxGL({
-        accessToken: 'pk.eyJ1Ijoid2hpdHNvbnMiLCJhIjoiY2l0eW15ZDJ6MDhrbTJ5bjRuZGx1Z3lmZiJ9.4RXjTjxBUVzG2X3mdtcSZQ',
-        style: 'assets/outdoors_style.json',
-        maxZoom: 21
-    }).addTo(map);
+		incomeChart.on('filtered', function(chart, filter) {
+			updateMap()
+		});
 
-    document.getElementsByClassName("leaflet-control-attribution")[0].style.visibility = "hidden";
 
-d3.json('assets/demo.geojson', function(data) {
+		function updateMap() {
+			geoJsonLayer.clearLayers();
+			markers.clearLayers();
+			geoJsonLayer.addData({
+				type: 'FeatureCollection',
+				features: everything.top(Infinity)
+			});
+			markers.addLayer(geoJsonLayer);
 
-    //create crossfilter and dimensions
-    var filter = crossfilter(data.features); //filter is the root object of crossfilter
-    var all = filter.groupAll();  // study some of the key functions of crossfilter, such as groupAll, dimension
-    var everything = filter.dimension(function(d) {
-        return d
-    });
 
-    var geomDimension = filter.dimension(function(d) {
-        return d.geometry
-    });
 
+			var texts = "";
+			everything.top(Infinity).filter(function(d) {
+				return  texts += (" " + d.properties.vision);
+			});
 
-    var genderDimension = filter.dimension(function(d) {
-        return d.properties.gender
 
-    });
+			var frequency_list = wordFrequency(texts);
+			$('#cloud').jQCloud('destroy');
+			$('#cloud').jQCloud(frequency_list,{
+				colors: ["#800026", "#bd0026", "#e31a1c", "#fc4e2a", "#fd8d3c", "#feb24c", "#fed976", "#ffeda0", "#ffffcc"]
+			});
 
-    var genderDimensionGroup = genderDimension.group();
+			dc.renderAll();
+		}
 
-    var ethnicityDimension = filter.dimension(function(d) {
-        return d.properties.ethnicity
+		//map listeners
+		map.on('moveend', function() {
+			updateMapFilter()
+		});
 
-    });
+		map.on('zoomend', function() {
+			updateMapFilter()
+		});
 
-    var ethnicityDimensionGroup = ethnicityDimension.group();
 
+		function updateMapFilter() {
 
-    var incomeDimension = filter.dimension(function(d) {
-        return d.properties.annhincome
+			var texts = "";
+			everything.filter(function(d) {
+				if (map.getBounds().contains(L.geoJSON(d.geometry).getBounds())) {
+					texts += (" " + d.properties.vision);
+				}
+				return map.getBounds().contains(L.geoJSON(d.geometry).getBounds())
+			});
 
-    });
 
-    var incomeDimensionGroup = incomeDimension.group();
+			var frequency_list = wordFrequency(texts);
+			$('#cloud').jQCloud('destroy');
+			$('#cloud').jQCloud(frequency_list,{
+				colors: ["#800026", "#bd0026", "#e31a1c", "#fc4e2a", "#fd8d3c", "#feb24c", "#fed976", "#ffeda0", "#ffffcc"]
+			});
 
+			dc.redrawAll();
 
+		}
 
-    var geoJsonLayer = L.geoJson({
-        type: 'FeatureCollection',
-        features: geomDimension.top(Infinity)
-    }, {
-        pointToLayer: function (feature, latlng) {
+		updateMapFilter();
 
-            return L.circleMarker(latlng, {
-                radius: 3,
-                fillColor: "steelblue",
-                color: "steelblue",
-                weight: 1,
-                stroke: false,
-                opacity: 0.5,
-                fillOpacity: 0.7
-            })
-        },
-        onEachFeature: function (feature, layer) {
-            layer.bindTooltip(feature.properties.city);
-        }
-    });
-
-    var markers = L.markerClusterGroup();
-
-    markers.addLayer(geoJsonLayer);
-    markers.addTo(map);
-
-
-    var genderChart = dc.barChart('#genderChart');
-
-    genderChart
-        .height(120)
-        .dimension(genderDimension)
-        .group(genderDimensionGroup)
-        .elasticY(false)
-        .x(d3.scale.ordinal())
-        .xUnits(dc.units.ordinal)
-        .yAxis()
-        .ticks(4);
-
-    var ethnicityChart = dc.pieChart('#ethnicityChart');
-
-    ethnicityChart
-        .height(120)
-        .dimension(ethnicityDimension)
-        .group(ethnicityDimensionGroup)
-        .innerRadius(25);
-
-
-    var incomeChart = dc.barChart('#incomeChart');
-
-    incomeChart
-        .height(120)
-        .dimension(incomeDimension)
-        .group(incomeDimensionGroup)
-        .elasticY(false)
-        .x(d3.scale.ordinal())
-        .xUnits(dc.units.ordinal)
-        .yAxis()
-        .ticks(4);
-
-
-    dc.renderAll();
-
-
-    //chart listeners
-    genderChart.on('filtered', function(chart, filter) {
-        updateMap()
-    });
-
-    ethnicityChart.on('filtered', function(chart, filter) {
-        updateMap()
-    });
-
-    incomeChart.on('filtered', function(chart, filter) {
-        updateMap()
-    });
-
-
-//    function generateData() {
-//        var data = [];
-//        var geo = geomDimension.top(Infinity);
-//        for(var i = 0; i < geo.length; i++) {
-//            lng = geo[i].geometry.coordinates[1];
-//            lat = geo[i].geometry.coordinates[0];
-//            data.push([ lat, lng ]);
-//        }
-//    }
-   // generateData();
-
-
-    function updateMap() {
-        geoJsonLayer.clearLayers();
-        markers.clearLayers();
-        geoJsonLayer.addData({
-            type: 'FeatureCollection',
-            features: everything.top(Infinity)
-        });
-        markers.addLayer(geoJsonLayer);
-      //  generateData();
-    }
-
-
-    //map listeners
-    map.on('moveend', function() {
-        updateMapFilter()
-    });
-    map.on('zoomend', function() {
-        updateMapFilter()
-    });
-
-
-    function updateMapFilter() {
-        geomDimension.filter(function(d) {
-            return map.getBounds().contains(L.geoJSON(d).getBounds())
-        });
-        dc.redrawAll();
-
-
-        var texts = "";
-        everything.filter(function(d) {
-            if (map.getBounds().contains(L.geoJSON(d.geometry).getBounds())) {
-                texts += (" " + d.properties.content);
-
-            }
-        });
-
-        frequency_list = wordFrequency(texts);
-        $('#cloud').jQCloud('destroy');
-        $('#cloud').jQCloud(frequency_list,{
-            // shape: 'rectangular',
-            // colors: ["#800026", "#bd0026", "#e31a1c", "#fc4e2a", "#fd8d3c", "#feb24c", "#fed976", "#ffeda0", "#ffffcc"]
-        });
-
-
-
-    }
-
-
-    updateMapFilter();
-
-
-
-
-
-
-});
+	});
 
 </script>
 </body>
