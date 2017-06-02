@@ -128,7 +128,7 @@
         var newArray = [], filteredArray = [], wordObj;
         wordArray.forEach(function (word) {
             wordObj = newArray.filter(function (w){
-                return w.text == word;
+                return w.text == word.toLowerCase();
             });
             if (wordObj.length) {
                 wordObj[0].weight += 1;
@@ -147,7 +147,9 @@
             "an", "g", "It", "g", "don", "re", "think", "lot", "m", "re", "get", "good", "must",
             "2", "-", "them", "had", "take", "out", "etc", "has", "would", "20", "no", "_",
             "around", "how", "In", "us", "__", "just", "too", "sure", "area", "into", "per", "$",
-            "3", "there", "At", "13", "gotten", "going", "including", "areas", "25", "wont"
+            "3", "there", "At", "13", "gotten", "going", "including", "areas", "25", "wont", "(e",
+            "here", "go", "my", "few", "ag", "who", "over", "--", "along", "here", "see", "few", "other",
+            "last", "N", "put", "2000", "off", "county", "d", "x%", "re:", "d", "~", "i", "î", "they"
         ];
 
         newArray.filter(function(word){
