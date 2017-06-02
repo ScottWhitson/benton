@@ -124,24 +124,8 @@
 
     function wordFrequency(txt) {
 
-//        var normal_words = [
-//            " to ", " that ", "this", "them", "do", "This",
-//            "the", "do", "See", "The", "and", "has", "have",
-//            "me", "we", "who", "what", "out", "Will", " on ",
-//            "are",  "not", "may", "been", "you", "it"
-//        ];
-
-        var normal_words = [
-        ];
-
-        for (var i = 0; i < normal_words.length; i++) {
-            txt = txt.replace(normal_words[i], "");
-        }
-
-        txt = txt.replace("  ", "");
-
         var wordArray = txt.split(/[ .?!,*'"]/);
-        var newArray = [], wordObj;
+        var newArray = [], filteredArray = [], wordObj;
         wordArray.forEach(function (word) {
             wordObj = newArray.filter(function (w){
                 return w.text == word;
@@ -153,8 +137,26 @@
             }
         });
 
+        var words = ["", "that", "this", "we", "I", "you", "he", "she",
+            "and", "be", "are", "is", "was", "were", "Could", "Would", "of", "it",
+            "with", "A", "s", "t", "with", "of", "to", "the", "for", "in", "not", ")",
+            "&", "our", "more", "people", "at", "We", "_", "our", "so", "throughout", "5",
+            "maybe", "if", "use", "by", "as", "all", "4", "The", "on", "a", "on", "lots",
+            "The", "-", "All", "but", "can", "up", "or", "need", "like", "will", "should",
+            "way", "its", "do", "make", "between", "null", "/", "1", "want", "what", "It",
+            "an", "g", "It", "g", "don", "re", "think", "lot", "m", "re", "get", "good", "must",
+            "2", "-", "them", "had", "take", "out", "etc", "has", "would", "20", "no", "_",
+            "around", "how", "In", "us", "__", "just", "too", "sure", "area", "into", "per", "$",
+            "3", "there", "At", "13", "gotten", "going", "including", "areas", "25", "wont"
+        ];
 
-        return newArray;
+        newArray.filter(function(word){
+            if (!words.includes(word.text)) {
+                filteredArray.push(word);
+            }
+        })
+
+        return filteredArray;
     }
 
     var map = L.map('map', {zoomControl: false, scrollWheelZoom: true, maxZoom: 21}).setView([44.570861,-123.276327], 12);
@@ -319,7 +321,11 @@
             });
 
             dc.redrawAll();
+
         }
+
+        updateMapFilter();
+
     });
 
 </script>
