@@ -289,7 +289,21 @@
                 features: everything.top(Infinity)
             });
             markers.addLayer(geoJsonLayer);
-            //       generateData();
+
+
+
+	        var texts = "";
+	        everything.top(Infinity).filter(function(d) {
+		        return  texts += (" " + d.properties.vision);
+	        });
+
+
+	        var frequency_list = wordFrequency(texts);
+	        $('#cloud').jQCloud('destroy');
+	        $('#cloud').jQCloud(frequency_list,{
+		        colors: ["#800026", "#bd0026", "#e31a1c", "#fc4e2a", "#fd8d3c", "#feb24c", "#fed976", "#ffeda0", "#ffffcc"]
+	        });
+
             dc.renderAll();
         }
 
