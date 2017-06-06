@@ -218,6 +218,12 @@
 
         var incomeDimensionGroup = incomeDimension.group();
 
+        var ageDimension = filter.dimension(function(d) {
+            return d.properties.age
+        });
+
+        var ageDimensionGroup = ageDimension.group();
+
 
         var geoJsonLayer = L.geoJson({
             type: 'FeatureCollection',
