@@ -174,9 +174,19 @@
         return filteredArray;
     }
 
-    var map = L.map('map', {zoomControl: false, scrollWheelZoom: true, maxZoom: 21}).setView([44.570861,-123.276327], 12);
+    var map = L.map('map', {zoomControl: false, scrollWheelZoom: true, maxZoom: 21}).setView([44.4648,-123.6956], 10);
 
-    L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
+
+    //L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
+
+    var gl = L.mapboxGL({
+        accessToken: 'pk.eyJ1Ijoid2hpdHNvbnMiLCJhIjoiY2l0eW15ZDJ6MDhrbTJ5bjRuZGx1Z3lmZiJ9.4RXjTjxBUVzG2X3mdtcSZQ',
+        style: 'mapbox://styles/whitsons/cj3l1arj400072ro5xyktkicm',
+        maxZoom: 21
+    }).addTo(map);
+
+    //L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
+
 
     document.getElementsByClassName("leaflet-control-attribution")[0].style.visibility = "hidden";
 
