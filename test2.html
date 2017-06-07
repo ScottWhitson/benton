@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Benton County</title>
+    <!--libraries for mapping and data-->
+    <!--Leaflet-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" >
+    <!--DC-->
+    <link rel="stylesheet" href="https://dc-js.github.io/dc.js/css/dc.min.css">
+    <!--Bootstrap-->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <!--cloudflare animation-->
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Courgette|Inconsolata|Titillium+Web|Fira+Sans+Condensed" />
+    <!--Bootstrap-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="css/jqcloud.css" />
+
+    <!--add a favicon-->
+    <link rel="favicon" href="img/favicon.ico" type="image/ico" />
+
+    <link rel="stylesheet" href="css/MarkerCluster.css" />
+    <link rel="stylesheet" href="css/MarkerCluster.Default.css" />
+
+    <!--CSS-->
+    <link rel="stylesheet" href="css/main.css">
+
+    <!--add font families-->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+
+    <script src="https://dc-js.github.io/dc.js/js/d3.js"></script>
+    <!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
+    <!--<script src="https://alexmacy.github.io/crossfilter/crossfilter.v1.min.js"></script>-->
+    <script src="https://dc-js.github.io/dc.js/js/crossfilter.js"></script>
+    <script src="https://dc-js.github.io/dc.js/js/dc.js"></script>
+
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+
+    <script src="https://d3js.org/d3-hexbin.v0.2.min.js"></script>
+
+
+    <script src="js/leaflet.markercluster-src.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- mapbox gl js -->
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.js"></script>
+    <!-- leaflet mapbox js -->
+    <script src="https://rawgit.com/mapbox/mapbox-gl-leaflet/master/leaflet-mapbox-gl.js"></script>
+    <script src="js/jqcloud.js"></script>
+
+</head>
+
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top navbar-toggleable-md" role="navigation">
+    <div class="container-fluid">
+        <!--<div class="container-fluid">-->
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <!--<a class="navbar-brand" href="#">GeoVisualization</a>-->
+            <a class="navbar-brand" href="#" title="GeoVisualization Example">
+                <img src="img/logo-long.png" style="width:80%; margin-top:-10px" class="d-inline-block align-top">
+            </a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="index.html">Home</a>
+                </li>
+                <li>
+                    <a href="map.html">Map</a>
+                </li>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Share To... <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"> <i class="fa fa-facebook-square" aria-hidden="true"></i> Facebook</a></li>
+                        <li><a href="#"> <i class="fa fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+                        <li><a href="https://alturl.com/kni7r"> <i class="fa fa-link" aria-hidden="true"></i> ShortUrl</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="about.html" target="_blank">About</a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="map" class="main"></div>
+
+<div class="container-fluid">
+
+<div class="panel panel-primary sidebar">
+    <span class="pull-left clickable"> Info Panel  <i class="glyphicon glyphicon-chevron-up"></i></span>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col col-md-3 text-center">
+                <h4>World Cloud</h4>
+                <div id="cloud"></div>
+            </div>
+            <div class="col col-md-3 text-center">
+                <h4>Gender</h4>
+                <div id="genderChart"></div>
+            </div>
+            <div class="col col-md-3 text-center">
+                <h4>Ethnicity</h4>
+                <div id="ethnicityChart"></div>
+            </div>
+            <div class="col col-md-3 text-center">
+                <h4>Annual Home Income</h4>
+                <div id="incomeChart"></div>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+
+</div>
+
+<p class="credit">
+    <img class="credit" src="img/grouplogo.png" class="align-top" height="40px" align="right">
+</p>
+
+<script>
+
+
+    $(".clickable").on('click', function(){
+        var $this = $(this);
+        if(!$this.hasClass('panel-collapsed')) {
+            $this.parents('.panel').find('.panel-body').slideUp();
+            $this.addClass('panel-collapsed');
+            $this.find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+        } else {
+            $this.parents('.panel').find('.panel-body').slideDown();
+            $this.removeClass('panel-collapsed');
+            $this.find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+        }
+    })
+
+
+
+    function wordFrequency(txt) {
+
+        var wordArray = txt.split(/[ .?!,*'"]/);
+        var newArray = [], filteredArray = [], wordObj;
+        wordArray.forEach(function (word) {
+            wordObj = newArray.filter(function (w){
+                return w.text == word;
+            });
+            if (wordObj.length) {
+                wordObj[0].weight += 1;
+            } else {
+                newArray.push({text: word, weight: 1});
+            }
+        });
+
+        var words = ["", "that", "this", "we", "I", "you", "he", "she",
+            "and", "be", "are", "is", "was", "were", "Could", "Would", "of", "it",
+            "with", "A", "s", "t", "with", "of", "to", "the", "for", "in", "not", ")",
+            "&", "our", "more", "people", "at", "We", "_", "our", "so", "throughout", "5",
+            "maybe", "if", "use", "by", "as", "all", "4", "survey", "The", "on", "a", "on", "lots",
+            "The", "-", "All", "but", "can", "up", "or", "need", "like", "will", "should",
+            "way", "its", "do", "make", "between", "null", "/", "1", "want", "what", "It",
+            "an", "g", "It", "g", "don", "re", "think", "30", "lot", "about", "m", "re", "get", "good", "must",
+            "2", "-", "them", "had", "take", "out", "etc", "has", "would", "20", "no", "_",
+            "around", "how", "In", "us", "__", "just", "too", "sure", "area", "into", "per", "$",
+            "3", "there", "At", "13", "gotten", "going", "including", "areas", "25", "wont", "(e",
+            "here", "go", "my", "few", "ag", "who", "over", "--", "along", "here", "see", "few", "other",
+            "last", "N", "put", "2000", "off", "any", "county", "d", "40", "x%", "re:", "d", "~", "i", "î", "they",
+            "have", "am", "(I", "(&", "II", "21", "time", "through", "B", "time", "well", "those",
+            "yet", "than", "oh", "being", "street", "things", "C", "VS", "from", "Not", "down", "30", "ve",
+            "exists", "when", "flat", "let", "could", "these", "type", "one", "much", "find", "(4",
+            "getting", "44", "ll", "If", "do", "scale", "light)", "know", "some", "done", "ask",
+            "such", "ie", "10", "fill", "room", "number", "also", "happen", "their", "within", "550k", "stay",
+            "Don", "15", "longer", "e", "15", "until", "end", "1)", "your", " 34", "been", "isn", "themselves",
+            "since", "why", "v=GKB8hXYod2w", "Been", "2)", "3)", "4)", "bit", "most state", "This", "Too", "front"
+        ];
+
+        newArray.filter(function(word){
+            if (!words.includes(word.text)) {
+                filteredArray.push(word);
+            }
+        })
+
+        return filteredArray;
+    }
+
+    var map = L.map('map', {zoomControl: false, scrollWheelZoom: true, maxZoom: 21}).setView([44.570861,-123.276327], 12);
+
+    //L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
+
+    var gl = L.mapboxGL({
+        accessToken: 'pk.eyJ1Ijoid2hpdHNvbnMiLCJhIjoiY2l0eW15ZDJ6MDhrbTJ5bjRuZGx1Z3lmZiJ9.4RXjTjxBUVzG2X3mdtcSZQ',
+        style: 'assets/outdoors_style.json',
+        maxZoom: 21
+    }).addTo(map);
+
+    document.getElementsByClassName("leaflet-control-attribution")[0].style.visibility = "hidden";
+
+    d3.json('assets/data.geojson', function(data) {
+
+
+        //create crossfilter and dimensions
+        var filter = crossfilter(data.features); //filter is the root object of crossfilter
+        var all = filter.groupAll();  // study some of the key functions of crossfilter, such as groupAll, dimension
+        var everything = filter.dimension(function(d) {
+            return d
+        });
+
+        var geomDimension = filter.dimension(function(d) {
+            return d.geometry
+        });
+
+
+        var genderDimension = filter.dimension(function(d) {
+            return d.properties.gender
+
+        });
+
+        var genderDimensionGroup = genderDimension.group();
+
+        var ethnicityDimension = filter.dimension(function(d) {
+            return d.properties.ethnicity
+
+        });
+
+        var ethnicityDimensionGroup = ethnicityDimension.group();
+
+
+        var incomeDimension = filter.dimension(function(d) {
+            return d.properties.income
+        });
+
+        var incomeDimensionGroup = incomeDimension.group();
+
+
+        var geoJsonLayer = L.geoJson({
+            type: 'FeatureCollection',
+            features: geomDimension.top(Infinity)
+        }, {
+            pointToLayer: function (feature, latlng) {
+
+                return L.circleMarker(latlng, {
+                    radius: 3,
+                    fillColor: "steelblue",
+                    color: "steelblue",
+                    weight: 1,
+                    stroke: false,
+                    opacity: 0.5,
+                    fillOpacity: 0.7
+                })
+            },
+            onEachFeature: function (feature, layer) {
+                layer.bindTooltip(feature.properties.city);
+            }
+        });
+
+        var markers = L.markerClusterGroup();
+        markers.addLayer(geoJsonLayer);
+        markers.addTo(map);
+
+
+        var genderChart = dc.barChart('#genderChart');
+        genderChart
+            .height(120)
+            .dimension(genderDimension)
+            .group(genderDimensionGroup)
+            .elasticY(false)
+            .x(d3.scale.ordinal())
+            .xUnits(dc.units.ordinal)
+            .yAxis()
+            .ticks(4);
+
+        var ethnicityChart = dc.pieChart('#ethnicityChart');
+        ethnicityChart
+            .height(120)
+            .dimension(ethnicityDimension)
+            .group(ethnicityDimensionGroup)
+            .innerRadius(25);
+
+        var incomeChart = dc.barChart('#incomeChart');
+        incomeChart
+            .height(120)
+            .dimension(incomeDimension)
+            .group(incomeDimensionGroup)
+            .elasticY(false)
+            .x(d3.scale.ordinal())
+            .xUnits(dc.units.ordinal)
+            .yAxis()
+            .ticks(4);
+
+        dc.renderAll();
+
+
+
+        //chart listeners
+        genderChart.on('filtered', function(chart, filter) {
+            updateMap()
+        });
+
+        ethnicityChart.on('filtered', function(chart, filter) {
+            updateMap()
+        });
+
+        incomeChart.on('filtered', function(chart, filter) {
+            updateMap()
+        });
+
+
+        function updateMap() {
+            geoJsonLayer.clearLayers();
+            markers.clearLayers();
+            geoJsonLayer.addData({
+                type: 'FeatureCollection',
+                features: everything.top(Infinity)
+            });
+            markers.addLayer(geoJsonLayer);
+
+
+
+            var texts = "";
+            everything.top(Infinity).filter(function(d) {
+                return  texts += (" " + d.properties.vision);
+            });
+
+
+            var frequency_list = wordFrequency(texts);
+            $('#cloud').jQCloud('destroy');
+            $('#cloud').jQCloud(frequency_list,{
+                colors: ["#800026", "#bd0026", "#e31a1c", "#fc4e2a", "#fd8d3c", "#feb24c", "#fed976", "#ffeda0", "#ffffcc"]
+            });
+
+            dc.renderAll();
+        }
+
+        //map listeners
+        map.on('moveend', function() {
+            updateMapFilter()
+        });
+
+        map.on('zoomend', function() {
+            updateMapFilter()
+        });
+
+
+        function updateMapFilter() {
+
+            var texts = "";
+            everything.filter(function(d) {
+                if (map.getBounds().contains(L.geoJSON(d.geometry).getBounds())) {
+                    texts += (" " + d.properties.vision);
+                }
+                return map.getBounds().contains(L.geoJSON(d.geometry).getBounds())
+            });
+
+
+            var frequency_list = wordFrequency(texts);
+            $('#cloud').jQCloud('destroy');
+            $('#cloud').jQCloud(frequency_list,{
+                colors: ["#800026", "#bd0026", "#e31a1c", "#fc4e2a", "#fd8d3c", "#feb24c", "#fed976", "#ffeda0", "#ffffcc"]
+            });
+
+            dc.redrawAll();
+
+        }
+
+        updateMapFilter();
+
+    });
+
+</script>
+</body>
+</html>
