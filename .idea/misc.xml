@@ -22,9 +22,6 @@
       </profile-state>
     </entry>
   </component>
-  <component name="SvnConfiguration">
-    <configuration>$USER_HOME$/.subversion</configuration>
-  </component>
   <component name="masterDetails">
     <states>
       <state key="MarkdownNavigator.LinkMap.UI">

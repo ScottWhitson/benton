@@ -95,24 +95,28 @@
 
 <div class="container">
     <div class="row justify-content-md-center sidebar">
-        <div class="col col-md-3">
+        <div class="col col-md-2">
             <h4>World Cloud</h4>
             <div id="cloud"></div>
         </div>
-        <div class="col col-md-3 text-center">
+        <div class="col col-md-2 text-center">
             <h4>Gender</h4>
             <div id="genderChart"></div>
         </div>
-        <div class="col col-md-3 text-center">
+        <div class="col col-md-2 text-center">
             <h4>Ethnicity</h4>
             <div id="ethnicityChart"></div>
         </div>
-        <div class="col col-md-3 text-center">
+        <div class="col col-md-2 text-center">
             <h4>Annual Home Income</h4>
             <div id="incomeChart"></div>
         </div>
+        <div class="col col-md-1 text-center"></div>
+        <div class="col col-md-2 text-center">
+            <h4>Age</h4>
+            <div id="ageChart"></div>
+        </div>
     </div>
-
     <div class="row">
         <div id="map" class="main"></div>
         <p class="credit">
@@ -143,7 +147,7 @@
             "and", "be", "are", "is", "was", "were", "Could", "Would", "of", "it",
             "with", "A", "s", "t", "with", "of", "to", "the", "for", "in", "not", ")",
             "&", "our", "more", "people", "at", "We", "_", "our", "so", "throughout", "5",
-            "maybe", "if", "use", "by", "as", "all", "4", "The", "on", "a", "on", "lots",
+            "maybe", "if", "use", "by", "as", "all", "4", "survey", "The", "on", "a", "on", "lots",
             "The", "-", "All", "but", "can", "up", "or", "need", "like", "will", "should",
             "way", "its", "do", "make", "between", "null", "/", "1", "want", "what", "It",
             "an", "g", "It", "g", "don", "re", "think", "30", "lot", "about", "m", "re", "get", "good", "must",
@@ -172,13 +176,7 @@
 
     var map = L.map('map', {zoomControl: false, scrollWheelZoom: true, maxZoom: 21}).setView([44.570861,-123.276327], 12);
 
-    //L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
-
-    var gl = L.mapboxGL({
-        accessToken: 'pk.eyJ1Ijoid2hpdHNvbnMiLCJhIjoiY2l0eW15ZDJ6MDhrbTJ5bjRuZGx1Z3lmZiJ9.4RXjTjxBUVzG2X3mdtcSZQ',
-        style: 'assets/outdoors_style.json',
-        maxZoom: 21
-    }).addTo(map);
+    L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
 
     document.getElementsByClassName("leaflet-control-attribution")[0].style.visibility = "hidden";
 
@@ -282,6 +280,19 @@
 
         dc.renderAll();
 
+        var ageChart = dc.barChart('#ageChart');
+        ageChart
+            .height(120)
+            .dimension(ageDimension)
+            .group(ageDimensionGroup)
+            .elasticY(false)
+            .x(d3.scale.ordinal())
+            .xUnits(dc.units.ordinal)
+            .yAxis()
+            .ticks(4);
+
+        dc.renderAll();
+
 
 
         //chart listeners
@@ -294,6 +305,9 @@
         });
 
         incomeChart.on('filtered', function(chart, filter) {
+            updateMap()
+        });
+        ageChart.on('filtered', function(chart, filter) {
             updateMap()
         });
 
@@ -332,6 +346,9 @@
         map.on('zoomend', function() {
             updateMapFilter()
         });
+
+        var county = L.geojson('assets/benton_county.geojson')
+            county.addTo(map);
 
 
         function updateMapFilter() {
