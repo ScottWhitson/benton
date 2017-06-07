@@ -93,40 +93,62 @@
     </div>
 </div>
 
-<div class="container">
-    <div class="row justify-content-md-center sidebar">
-        <div class="col col-md-2">
-            </br>
-            <div id="cloud"></div>
+<div id="map" class="main"></div>
+
+<div class="container-fluid">
+
+    <div class="panel panel-primary sidebar">
+        <span class="pull-left clickable"> Info Panel  <i class="glyphicon glyphicon-chevron-up"></i></span>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col col-md-2">
+                    </br>
+                    <div id="cloud"></div>
+                </div>
+                <div class="col col-md-2 text-center">
+                    <h4>Gender</h4>
+                    <div id="genderChart"></div>
+                </div>
+                <div class="col col-md-2 text-center">
+                    <h4>Ethnicity</h4>
+                    <div id="ethnicityChart"></div>
+                </div>
+                <div class="col col-md-2 text-center">
+                    <h4>Annual Home Income</h4>
+                    <div id="incomeChart"></div>
+                </div>
+                <div class="col col-md-1 text-center"></div>
+                <div class="col col-md-2 text-center">
+                    <h4>Age</h4>
+                    <div id="ageChart"></div>
+                </div>
+            </div>
+
         </div>
-        <div class="col col-md-2 text-center">
-            <h4>Gender</h4>
-            <div id="genderChart"></div>
-        </div>
-        <div class="col col-md-2 text-center">
-            <h4>Ethnicity</h4>
-            <div id="ethnicityChart"></div>
-        </div>
-        <div class="col col-md-2 text-center">
-            <h4>Annual Home Income</h4>
-            <div id="incomeChart"></div>
-        </div>
-        <div class="col col-md-1 text-center"></div>
-        <div class="col col-md-2 text-center">
-            <h4>Age</h4>
-            <div id="ageChart"></div>
-        </div>
+
+
     </div>
-    <div class="row">
-        <div id="map" class="main"></div>
-        <p class="credit">
-            <img class="credit" src="img/grouplogo.png" class="align-top" height="40px" align="right">
-        </p>
-    </div>
-</div>
+
 </div>
 
+<p class="credit">
+    <img class="credit" src="img/grouplogo.png" class="align-top" height="40px" align="right">
+</p>
+
 <script>
+
+    $(".clickable").on('click', function(){
+        var $this = $(this);
+        if(!$this.hasClass('panel-collapsed')) {
+            $this.parents('.panel').find('.panel-body').slideUp();
+            $this.addClass('panel-collapsed');
+            $this.find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+        } else {
+            $this.parents('.panel').find('.panel-body').slideDown();
+            $this.removeClass('panel-collapsed');
+            $this.find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+        }
+    })
 
     function wordFrequency(txt) {
 
@@ -162,7 +184,7 @@
             "getting", "44", "ll", "If", "do", "scale", "light)", "know", "some", "done", "ask",
             "such", "ie", "10", "fill", "room", "number", "also", "happen", "their", "within", "550k", "stay",
             "Don", "15", "longer", "e", "15", "until", "end", "1)", "your", " 34", "been", "isn", "themselves",
-            "since", "why", "v=GKB8hXYod2w", "Been", "2)", "3)", "4)", "bit", "most state", "This", "Too", "front"
+            "since", "why", "v=GKB8hXYod2w", ";)", "Been", "2)", "3)", "4)", "bit", "most state", "This", "Too", "front"
         ];
 
         newArray.filter(function(word){
