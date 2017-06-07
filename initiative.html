@@ -50,7 +50,10 @@
     <!-- leaflet mapbox js -->
     <script src="https://rawgit.com/mapbox/mapbox-gl-leaflet/master/leaflet-mapbox-gl.js"></script>
     <script src="js/jqcloud.js"></script>
+    <link rel="stylesheet" href="//unpkg.com/leaflet@1.0.0/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/L.Control.Basemaps.css" />
 
+    <script src="js/L.Control.Basemaps.js"></script>
 </head>
 
 <body>
@@ -204,16 +207,27 @@
 
     var map = L.map('map', {zoomControl: false, scrollWheelZoom: true, maxZoom: 21}).setView([44.4442,-123.4402], 11);
 
+    //Add Basemap chooser
+    var basemaps = [
+        L.tileLayer('https://api.mapbox.com/styles/v1/whitsons/cj3n8v48w00182rplk23etkk5/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoid2hpdHNvbnMiLCJhIjoiY2l0eW15ZDJ6MDhrbTJ5bjRuZGx1Z3lmZiJ9.4RXjTjxBUVzG2X3mdtcSZQ', {
+            label: 'Moonlight'
+        }),
 
-    //L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
+        L.tileLayer('https://api.mapbox.com/styles/v1/whitsons/cj3l1arj400072ro5xyktkicm/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoid2hpdHNvbnMiLCJhIjoiY2l0eW15ZDJ6MDhrbTJ5bjRuZGx1Z3lmZiJ9.4RXjTjxBUVzG2X3mdtcSZQ', {
+            label: 'Outdoors'
+        }),
 
-    var gl = L.mapboxGL({
-        accessToken: 'pk.eyJ1Ijoid2hpdHNvbnMiLCJhIjoiY2l0eW15ZDJ6MDhrbTJ5bjRuZGx1Z3lmZiJ9.4RXjTjxBUVzG2X3mdtcSZQ',
-        style: 'mapbox://styles/whitsons/cj3l1arj400072ro5xyktkicm',
-        maxZoom: 21
-    }).addTo(map);
+        L.tileLayer('https://api.mapbox.com/styles/v1/whitsons/cj3nhkild001x2sqnbxdymg60/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoid2hpdHNvbnMiLCJhIjoiY2l0eW15ZDJ6MDhrbTJ5bjRuZGx1Z3lmZiJ9.4RXjTjxBUVzG2X3mdtcSZQ', {
+            label: 'Satellite'
+        })
+    ];
 
-    //L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
+    map.addControl(L.control.basemaps({
+        basemaps: basemaps,
+        tileX: 0,
+        tileY: 0,
+        tileZ: 1
+    }));
 
 
     document.getElementsByClassName("leaflet-control-attribution")[0].style.visibility = "hidden";
