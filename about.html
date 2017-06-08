@@ -10,29 +10,28 @@
     <meta property="og:description" content="This project was done to present the results of the Benton County Thriving Community Initive survey.
      The results are displyed in a geo-visual manner showing demographic results by city or town. The map also contains a word cloud which shows
      key words which identifies what the community values." />
-    <meta property="og:image" content="https://ScottWhitson.github.io/benton/img/benton.jpg" />
+    <meta property="og:image" content="https://ScottWhitson.github.io/benton/img/logo-long.jpg" />
     <title>Benton County TCI</title>
     <!--libraries for mapping and data-->
-    <!--Leaflet-->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" >
-    <!--DC-->
-    <link rel="stylesheet" href="https://dc-js.github.io/dc.js/css/dc.min.css">
+
     <!--Bootstrap-->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <!--cloudflare animation-->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Courgette|Inconsolata|Titillium+Web|Fira+Sans+Condensed" />
     <!--Bootstrap-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
-
     <!--add a favicon-->
     <link rel="favicon" href="img/favicon.ico" type="image/ico" />
 
-    <link rel="stylesheet" href="css/MarkerCluster.css" />
-    <link rel="stylesheet" href="css/MarkerCluster.Default.css" />
 
     <!--CSS-->
-    <link rel="stylesheet" href="css/main.css">
+    <!--<link rel="stylesheet" href="css/main.css">-->
+    <style>
+        body{
+            background-color: #c0d6ed;
+        }
 
+
+    </style>
 
     <!--add font families-->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
@@ -40,32 +39,11 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 
 
-    <script src="https://dc-js.github.io/dc.js/js/d3.js"></script>
-    <!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
-    <!--<script src="https://alexmacy.github.io/crossfilter/crossfilter.v1.min.js"></script>-->
-    <script src="https://dc-js.github.io/dc.js/js/crossfilter.js"></script>
-    <script src="https://dc-js.github.io/dc.js/js/dc.js"></script>
-
-
-    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
-    <script src="js/leaflet.markercluster-src.js"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
-    <!-- mapbox gl js -->
-    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.js"></script>
-    <!-- leaflet mapbox js -->
-    <script src="https://rawgit.com/mapbox/mapbox-gl-leaflet/master/leaflet-mapbox-gl.js"></script>
 </head>
-
 <body>
-
-<style>
-    body{
-        background-color: #c0d6ed;
-    }
-</style>
 
 <div class="navbar navbar-inverse navbar-fixed-top navbar-toggleable-md" role="navigation">
     <div class="container-fluid">
@@ -73,8 +51,8 @@
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
             <!--<a class="navbar-brand" href="#">GeoVisualization</a>-->
-            <a class="navbar-brand" href="#" title="GeoVisualization Example">
-                <img src="img/rsz_benton-logo.png" style="width:80%; margin-top:-10px" class="d-inline-block align-top">
+            <a class="navbar-brand" href="#" title="Benton County">
+                <img src="img/rsz_benton-logo.png" style="width:200%; margin-top:-10px" class="d-inline-block align-top">
             </a>
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -101,7 +79,7 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Share To... <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#"> <i class="fa fa-facebook-square" aria-hidden="true"></i> Facebook</a></li>
+                        <li><a href="https://www.facebook.com/sharer/sharer.php?u=scottwhitson.github.io/benton"> <i class="fa fa-facebook-square" aria-hidden="true"></i> Facebook</a></li>
                         <li><a href="#"> <i class="fa fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
                         <li><a href="https://alturl.com/kni7r"> <i class="fa fa-link" aria-hidden="true"></i> ShortUrl</a></li>
                         <!--Share-->
@@ -124,18 +102,10 @@
 
     <!-- Page Content -->
     <div class="container">
-
         <!-- Page Heading/Breadcrumbs -->
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">
-
-                </h1>
-                <ol class="breadcrumb">
-                    <li><a href="../../../Desktop/startbootstrap-modern-business-gh-pages/index.html"></a>
-                    </li>
-                    <li class="active">Benton County Thriving Communities Initiative</li>
-                </ol>
+                <h1 class="page-header"></h1>
             </div>
         </div>
         <!-- /.row -->
@@ -194,6 +164,7 @@
 
                         </p>
                 </div>
+            </div>
 
         <!-- Team Members -->
         <div class="row">
@@ -377,13 +348,7 @@
         </footer>
 
     </div>
-    <!-- /.container -->
 
-    <!--&lt;!&ndash; jQuery &ndash;&gt;-->
-    <!--<script src="../../../Desktop/startbootstrap-modern-business-gh-pages/js/jquery.js"></script>-->
-
-    <!--&lt;!&ndash; Bootstrap Core JavaScript &ndash;&gt;-->
-    <!--<script src="../../../Desktop/startbootstrap-modern-business-gh-pages/js/bootstrap.min.js"></script>-->
 
 </body>
 
