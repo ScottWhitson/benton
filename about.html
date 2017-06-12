@@ -1,8 +1,8 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,50 +15,79 @@
      The results are displyed in a geo-visual manner showing demographic results by city or town. The map also contains a word cloud which shows
      key words which identifies what the community values." />
     <meta property="og:image" content="https://ScottWhitson.github.io/benton/img/maryspeak.jpg" />
-    <title>Benton County TCI</title>
+    <title>Benton County</title>
     <!--libraries for mapping and data-->
-
+    <!--Leaflet-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" >
+    <!--DC-->
+    <link rel="stylesheet" href="https://dc-js.github.io/dc.js/css/dc.min.css">
     <!--Bootstrap-->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <!--cloudflare animation-->
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Courgette|Inconsolata|Titillium+Web|Fira+Sans+Condensed" />
+    <!--<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Courgette|Inconsolata|Titillium+Web|Fira+Sans+Condensed" />-->
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans" />
     <!--Bootstrap-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="css/jqcloud.css" />
+
     <!--add a favicon-->
     <link rel="favicon" href="img/favicon.ico" type="image/ico" />
 
+    <link rel="stylesheet" href="css/MarkerCluster.css" />
+    <link rel="stylesheet" href="css/MarkerCluster.Default.css" />
 
     <!--CSS-->
-    <!--<link rel="stylesheet" href="css/main.css">-->
+    <link rel="stylesheet" href="css/main.css">
+
     <style>
         body{
             background-color: #c0d6ed;
         }
-
-
     </style>
-
     <!--add font families-->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Cormorant+Garamond" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 
 
+    <script src="https://dc-js.github.io/dc.js/js/d3.js"></script>
+    <script src="https://dc-js.github.io/dc.js/js/crossfilter.js"></script>
+    <script src="https://dc-js.github.io/dc.js/js/dc.js"></script>
+
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+
+    <!--<script src="https://d3js.org/d3-hexbin.v0.2.min.js"></script>-->
+
+
+    <script src="js/leaflet.markercluster-src.js"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- mapbox gl js -->
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.js"></script>
+    <!-- leaflet mapbox js -->
+    <script src="https://rawgit.com/mapbox/mapbox-gl-leaflet/master/leaflet-mapbox-gl.js"></script>
+    <script src="js/jqcloud.js"></script>
+    <link rel="stylesheet" href="//unpkg.com/leaflet@1.0.0/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/L.Control.Basemaps.css" />
+
+    <script src="js/L.Control.Basemaps.js"></script>
+
 </head>
+
+
 <body>
 
-<div class="navbar navbar-inverse navbar-fixed-top navbar-toggleable-md" role="navigation" style="background-color: #8f929e;>
+<!-- Navigation -->
+<div class="navbar navbar-inverse navbar-fixed-top navbar-toggleable-md" role="navigation" style="background-color: #8f929e;">
     <div class="container-fluid">
         <!--<div class="container-fluid">-->
         <!-- Brand and toggle get grouped for better mobile display -->
-<div class="navbar-header">
-    <!--<a class="navbar-brand" href="#">GeoVisualization</a>-->
-    <a class="navbar-brand" href="#" title="Benton County 2040">
-        <img src="img/rsz_tci-icon.png" style="width:80%; margin-top:-10px" class="d-inline-block align-top">
-    </a>
-</div>
+        <div class="navbar-header">
+            <!--<a class="navbar-brand" href="#">GeoVisualization</a>-->
+            <a class="navbar-brand" href="#" title="Benton County 2040">
+                <img src="img/rsz_tci-icon.png" style="width:80%; margin-top:-10px" class="d-inline-block align-top">
+            </a>
+        </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
@@ -81,11 +110,8 @@
                     <a href="about.html" style="color: #33373e" >About</a>
                 </li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="color: #33373e";>Share To... <span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="color: #33373e">Share To... <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <!--<li><a href="https://www.facebook.com/sharer/sharer.php?u=scottwhitson.github.io/benton/"> <i class="fa fa-facebook-square" aria-hidden="true"></i> Facebook</a></li>-->
-                        <!--<li><a href="#"> <i class="fa fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>-->
-                        <!--<li><a href="https://alturl.com/kni7r"> <i class="fa fa-link" aria-hidden="true"></i> ShortUrl</a></li>-->
                         <!--Share-->
                         <li class="tweet">
                             <a href="https://twitter.com/share" class="twitter-share-button" data-size="large" data-text="Map survey results of Benton County's Thriving Communities Initiative." data-show-count="false">Tweet</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
@@ -95,263 +121,245 @@
                         </li>
                     </ul>
                 </li>
-
-            </ul>
-                </li>
-
             </ul>
         </div>
     </div>
 </div>
+<!--navigation end-->
 
-    <!-- Page Content -->
-    <div class="container">
-        <!-- Page Heading/Breadcrumbs -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header"></h1>
-            </div>
+<!-- Page Content -->
+<div class="container">
+
+    <!-- Page Heading/Breadcrumbs -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header"></h1>
         </div>
-        <!-- /.row -->
+    </div>
 
-        <!-- Intro Content -->
-        <div class="row">
-            <div class="col-md-6">
-                <br>
-                <br>
-                <br>
-                <img class="img-responsive" src=img/maryspeak.jpg alt="">
-            </div>
-            <div class="col-md-6">
-                <h2 class="page-header" >About This Project</h2>
-                <p>The Benton County 2040 Thriving Community Initiative (TCI) is a project in which the goal is to identify
-                    the core values and vision of the Benton County community. In order to identify community thoughts, the
-                    Thriving Communities Council conducted several surveys by  hosting public events throughout the County.
-                    At these events,  community members were asked to to share comments on what they like about where they lived
-                    and what they hoped to see in the future. </p>
-                <br>
-                <br>
-                <p>This project, conducted by students and faculty at Oregon State University, was done to present the results
-                    of this survey. The presentation of the results was done in a geo-visual manner which displays demographic
-                    results by city or town. The map also contains a word cloud which shows key words which identifies what the
-                    community values. </p>
-                <br>
-            </div>
-        </div>
 
-        <!-- content Tutorial -->
-
-        <div class="row">
-            <div class="col-lg-12">
-            <h2 class="page-header">Tutorial</h2>
-
-            <p>The displayed maps show responses based in each city. Zoom in on an area of interest in order to
-                view the data of that region. Once zoomed into the area of interest, click the different bars or
-                pie chart sections to adjust the word cloud response.</p>
+    <!-- Intro Content -->
+    <div class="row">
+        <div class="col-md-6">
             <br>
-                <br>
-            <p>  Responses to three different survey questions are depicted in three separate maps (Values Map,
-                Dreams Map, and Initiate Map) through a word cloud on the bottom left hand corner. The word cloud
-                shows keywords that indicate what is important to the people responding. Larger sized words indicate
-                that the word was used more frequently, while smaller words less frequently.</p>
+            <br>
+            <br>
+            <img class="img-responsive" src="img/maryspeak.jpg" alt="">
         </div>
+        <div class="col-md-6">
+            <h2 class="page-header" >About This Project</h2>
+            <p>The Benton County 2040 Thriving Community Initiative (TCI) is a project in which the goal is to identify
+                the core values and vision of the Benton County community. In order to identify community thoughts, the
+                Thriving Communities Council conducted several surveys by  hosting public events throughout the County.
+                At these events,  community members were asked to to share comments on what they like about where they lived
+                and what they hoped to see in the future. </p>
+            <br>
+            <br>
+            <p>This project, conducted by students and faculty at Oregon State University, was done to present the results
+                of this survey. The presentation of the results was done in a geo-visual manner which displays demographic
+                results by city or town. The map also contains a word cloud which shows key words which identifies what the
+                community values. </p>
+            <br>
+        </div>
+    </div>
+    <!-- /.row -->
 
-            <!-- content Tutorial -->
-
-            <div class="row">
-                <div class="col-lg-12">
-                    <h2 class="page-header">Background</h2>
-
-                    <p>To learn more about the Benton County Thriving Communities Initiative, please visit
-                        <a href="https://www.co.benton.or.us/2040">Benton County's TCI webpage.</a>
-
-
-                        </p>
+    <!-- Team Members -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h2 class="page-header">Our Team</h2>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="thumbnail">
+                <img class="img-responsive" src="http://placehold.it/750x450" alt="">
+                <div class="caption">
+                    <h2>Sione Filimoehala<br>
+                        <small>Student</small>
+                    </h2>
+                    <p> <small>MPP; Studying tertiary effects of infrastructure investments and methods of communicating
+                        scientific findings to decision-makers. My role in this piece was largely to create the data
+                        interaction portion of the map and provide support to the other areas.</small></p>
+                    <ul class="list-inline">
+                        <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
+                        </li>
+                    </ul>
                 </div>
             </div>
-
-        <!-- Team Members -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h2 class="page-header">Our Team</h2>
-            </div>
-            <div class="col-md-4 text-center">
-                <div class="thumbnail">
-                    <img class="img-responsive" src="http://placehold.it/750x450" alt="">
-                    <div class="caption">
-                        <h2>Sione Filimoehala<br>
-                            <small>Student</small>
-                        </h2>
-                        <p> <small>MPP; Studying tertiary effects of infrastructure investments and methods of communicating
-                            scientific findings to decision-makers. My role in this piece was largely to create the data
-                            interaction portion of the map and provide support to the other areas.</small></p>
-                        <ul class="list-inline">
-                            <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
-                            </li>
-                            <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
-                            </li>
-                            <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 text-center">
-                <div class="thumbnail">
-                    <img class="img-responsive" src="http://placehold.it/750x450" alt="">
-                    <div class="caption">
-                        <h2>Scott Whitson<br>
-                            <small>Student</small>
-                        </h2>
-                        <p><small>Senior in the College of Earth, Ocean, and Atmospheric Studies majoring in Geography and Geospatial Science.
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="thumbnail">
+                <img class="img-responsive" src="http://placehold.it/750x450" alt="">
+                <div class="caption">
+                    <h2>Scott Whitson<br>
+                        <small>Student</small>
+                    </h2>
+                    <p><small>Senior in the College of Earth, Ocean, and Atmospheric Studies majoring in Geography and Geospatial Science.
                         I have become primarily interested in Cartography and Land Use Planning. I play the cartographic role in this project,
-                            manipulating the style of the maps to best represent the data available.</small></p>
-                        <ul class="list-inline">
-                            <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
-                            </li>
-                            <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
-                            </li>
-                            <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 text-center">
-                <div class="thumbnail">
-                    <img class="img-responsive" src="http://placehold.it/750x450" alt="">
-                    <div class="caption">
-                        <h2>Madeleine Savage<br>
-                            <small>Student</small>
-                        </h2>
-                        <br>
-                        <p> Graduating senior at Oregon State University, studying Geography and GIS with a special
-                            interest in Cartography and Human Geography. For this project, I contributed to styling
-                            and layout, and data processing. </p>
-                        <ul class="list-inline">
-                            <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
-                            </li>
-                            <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
-                            </li>
-                            <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-12">
-                <h2 class="page-header">Advisors</h2>
-            </div>
-            <div class="col-md-4 text-center">
-                <div class="thumbnail">
-                    <img class="img-responsive" src="http://placehold.it/750x450" alt="">
-                    <div class="caption">
-                        <h2>John Smith<br>
-                            <small>Job Title</small>
-                        </h2>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iste saepe et quisquam nesciunt maxime.</p>
-                        <ul class="list-inline">
-                            <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
-                            </li>
-                            <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
-                            </li>
-                            <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 text-center">
-                <div class="thumbnail">
-                    <img class="img-responsive" src="http://placehold.it/750x450" alt="">
-                    <div class="caption">
-                        <h2>John Smith<br>
-                            <small>Job Title</small>
-                        </h2>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iste saepe et quisquam nesciunt maxime.</p>
-                        <ul class="list-inline">
-                            <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
-                            </li>
-                            <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
-                            </li>
-                            <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 text-center">
-                <div class="thumbnail">
-                    <img class="img-responsive" src="http://placehold.it/750x450" alt="">
-                    <div class="caption">
-                        <h2>John Smith<br>
-                            <small>Job Title</small>
-                        </h2>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iste saepe et quisquam nesciunt maxime.</p>
-                        <ul class="list-inline">
-                            <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
-                            </li>
-                            <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
-                            </li>
-                            <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
-                            </li>
-                        </ul>
-                    </div>
+                        manipulating the style of the maps to best represent the data available.</small></p>
+                    <ul class="list-inline">
+                        <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
-        <!-- /.row -->
-            <!-- Collaborators -->
-            <div class="row">
-                <div class="col-lg-12">
-                    <h2 class="page-header">Acknowledgement</h2>
+        <div class="col-md-4 text-center">
+            <div class="thumbnail">
+                <img class="img-responsive" src="http://placehold.it/750x450" alt="">
+                <div class="caption">
+                    <h2>Madeleine Savage<br>
+                        <small>Student</small>
+                    </h2>
+                    <br>
+                    <p> Graduating senior at Oregon State University, studying Geography and GIS with a special
+                        interest in Cartography and Human Geography. For this project, I contributed to styling
+                        and layout, and data processing. </p>
+                    <ul class="list-inline">
+                        <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
+                        </li>
+                    </ul>
                 </div>
-                <p>Bo Zhoa
-                    Kyle Hogrefe
-                    Sean McGuire
-                </p>
-
-
-
-                </div>
-
             </div>
-        <!-- /.row -->
-        <!-- Collaborators -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h2 class="page-header">Collaborators</h2>
-            </div>
-
-            <div class="col-md-2 col-sm-4 col-xs-6">
-                <img class="img-responsive customer-img" src="img/grouplogo.png" alt="">
-            </div>
-            <div class="col-md-2 col-sm-4 col-xs-6">
-                <img class="img-responsive customer-img" src="" alt="">
-            </div>
-            <div class="col-md-2 col-sm-4 col-xs-6">
-                <img class="img-responsive customer-img" src="img/osu_vertical1.png" alt="">
-            </div>
-            <div class="col-md-2 col-sm-4 col-xs-6">
-                <img class="img-responsive customer-img" src="" alt="">
-            </div>
-            <div class="col-md-2 col-sm-4 col-xs-6">
-                <img class="img-responsive customer-img" src="img/rsz_1benton-logo.png" alt="">
-            </div>
-
         </div>
-        <!-- /.row -->
-        <hr>
-
-        <!-- Footer -->
-        <footer>
-            <div class="row">
-                <div class="col-lg-12">
+        <div class="col-lg-12">
+            <h2 class="page-header">Advisors</h2>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="thumbnail">
+                <img class="img-responsive" src="http://placehold.it/750x450" alt="">
+                <div class="caption">
+                    <h2>John Smith<br>
+                        <small>Job Title</small>
+                    </h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iste saepe et quisquam nesciunt maxime.</p>
+                    <ul class="list-inline">
+                        <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
+                        </li>
+                    </ul>
                 </div>
             </div>
-        </footer>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="thumbnail">
+                <img class="img-responsive" src="http://placehold.it/750x450" alt="">
+                <div class="caption">
+                    <h2>John Smith<br>
+                        <small>Job Title</small>
+                    </h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iste saepe et quisquam nesciunt maxime.</p>
+                    <ul class="list-inline">
+                        <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="thumbnail">
+                <img class="img-responsive" src="http://placehold.it/750x450" alt="">
+                <div class="caption">
+                    <h2>John Smith<br>
+                        <small>Job Title</small>
+                    </h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iste saepe et quisquam nesciunt maxime.</p>
+                    <ul class="list-inline">
+                        <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.row -->
+
+    <!-- Acknowledgements -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h2 class="page-header">Acknowledgements</h2>
+        </div>
+        <p>
+        </p>
 
     </div>
+    <!-- Credits -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h2 class="page-header">Credits</h2>
+        </div>
+        <p> This project utilized the following libraries: colorbrewer.js, Bootstrap, Leaflet, D3, Crossfilter ,DC, jqCloud, and Cloudflare.
+
+        </p>
+    </div>
+
+    <!-- Resources -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h2 class="page-header">Resources</h2>
+        </div>
+        <p>https://www.co.benton.or.us/2040</p>
+    </div>
+
+    <!-- Collaborators -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h2 class="page-header">Collaborators</h2>
+        </div>
+
+        <div class="col-md-2 col-sm-4 col-xs-6">
+            <img class="img-responsive customer-img" src="img/grouplogo.png" alt="">
+        </div>
+        <div class="col-md-2 col-sm-4 col-xs-6">
+            <img class="img-responsive customer-img" src="" alt="">
+        </div>
+        <div class="col-md-2 col-sm-4 col-xs-6">
+            <img class="img-responsive customer-img" src="img/osu_vertical1.png" alt="">
+        </div>
+        <div class="col-md-2 col-sm-4 col-xs-6">
+            <img class="img-responsive customer-img" src="" alt="">
+        </div>
+        <div class="col-md-2 col-sm-4 col-xs-6">
+            <img class="img-responsive customer-img" src="img/rsz_1benton-logo.png" alt="">
+        </div>
+
+    </div>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+        <div class="row">
+            <div class="col-lg-12">
+                <p>Copyright &copy; Benton County TCI 2017</p>
+            </div>
+        </div>
+    </footer>
+
+</div>
+<!-- /.container -->
 
 
 </body>
