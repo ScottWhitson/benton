@@ -14,4 +14,4 @@ The Benton County 2040 Thriving Community Initiative (TCI) is a project in which
  
 This project, conducted by students and faculty at Oregon State University, was done to present the results of this survey. The presentation of the results was done in a geo-visual manner which displays demographic results by city or town. The map also contains a word cloud which shows key words which identifies what the community values. 
 
-![](benton/img/corvallis.jpg)
+![](img/corvallis.jpg)
