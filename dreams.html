@@ -28,8 +28,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
     <link rel="stylesheet" href="css/jqcloud.css" />
 
-    <!--add a favicon-->
-    <link rel="favicon" href="img/favicon.ico" type="image/ico" />
+    <!--favicon-->
+    <link rel="icon" href="img/ben_fav.ico" width="16" height="16" type="image/x-icon"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <link rel="stylesheet" href="css/MarkerCluster.css" />
     <link rel="stylesheet" href="css/MarkerCluster.Default.css" />
@@ -227,15 +228,18 @@
     //Add Basemap chooser
     var basemaps = [
         L.tileLayer('https://api.mapbox.com/styles/v1/whitsons/cj3n8v48w00182rplk23etkk5/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoid2hpdHNvbnMiLCJhIjoiY2l0eW15ZDJ6MDhrbTJ5bjRuZGx1Z3lmZiJ9.4RXjTjxBUVzG2X3mdtcSZQ', {
-            label: 'Moonlight'
+            label: 'Moonlight',
+            detectRetina: true
         }),
 
         L.tileLayer('https://api.mapbox.com/styles/v1/whitsons/cj3l1arj400072ro5xyktkicm/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoid2hpdHNvbnMiLCJhIjoiY2l0eW15ZDJ6MDhrbTJ5bjRuZGx1Z3lmZiJ9.4RXjTjxBUVzG2X3mdtcSZQ', {
-            label: 'Outdoors'
+            label: 'Outdoors',
+            detectRetina: true
         }),
 
         L.tileLayer('https://api.mapbox.com/styles/v1/whitsons/cj3nhkild001x2sqnbxdymg60/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoid2hpdHNvbnMiLCJhIjoiY2l0eW15ZDJ6MDhrbTJ5bjRuZGx1Z3lmZiJ9.4RXjTjxBUVzG2X3mdtcSZQ', {
-            label: 'Satellite'
+            label: 'Satellite',
+            detectRetina: true
         })
     ];
 
